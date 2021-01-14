@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  kanban-vision-postgres:
+    image: postgis/postgis:11-3.0-alpine
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    container_name: kanban-vision-postgresql
+    networks:
+      - kanban-vision-project-network
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: 123456
+        POSTGRES_DB: kanban-vision-test
+        PGDATA: /tmp
+    ports:
+      - "5432:4432"
+  kanban-vision-cache:
+    image: memcached:latest
+    container_name: kanban-vision-cache
+    networks:
+      - kanban-vision-project-network
+    ports:
+      - "11211:21211"
+    restart: always
+  kanban-vision:
+    depends_on:
+        - kanban-vision-postgres
+        - kanban-vision-cache
+        - kanban-vision-api-docs
+    build: .
+    container_name: kanban-vision
+    networks:
+      - kanban-vision-project-network
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    env_file:
+      - env.list
+  kanban-vision-api-docs:
+    build:
+      context: .
+      dockerfile: ApiDocsDockerfile
+    container_name: kanban-vision-api-docs
+    networks:
+      - kanban-vision-project-network
+    ports:
+      - "9090:9090"
+networks:
+  kanban-vision-project-network:
+    driver: bridge

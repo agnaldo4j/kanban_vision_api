@@ -1,0 +1,34 @@
+FORMAT: 1A
+HOST: https://agnaldo4j.github.io/kanban_vision_api/
+
+# Kanban Vision API
+
+# Group Auth
+
+# POST /v1/login
++ Request (application/json)
+
+    + Attributes (Login)
+
++ Response 200 (application/json)
+
+    + Attributes (LoginResultSuccess)
+
++ Response 400 (application/json)
+
+    + Attributes (LoginResultFailed)
+
++ Response 500
+
+# Data Structures
+
+## Login (object)
++ email: `teste@teste.com` (string, required) - e-mail
++ password: `123456789` (string, required) - password with  a minimum of 8 characters
+
+## LoginResultSuccess (object)
++ success: true (boolean, required) - Confirm success
+
+## LoginResultFailed (object)
++ success: false (boolean, required) - Confirm fail
++ message: (string, required) - Error description

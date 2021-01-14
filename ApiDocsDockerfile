@@ -1,0 +1,12 @@
+FROM ruby:latest
+
+RUN mkdir -p /opt/app
+ADD apiary.apib /opt/app/
+
+EXPOSE 9090
+
+WORKDIR /opt/app
+
+RUN gem install apiaryio
+
+ENTRYPOINT exec apiary preview --path="/opt/app/apiary.apib" --server --host=0.0.0.0 --port=9090
