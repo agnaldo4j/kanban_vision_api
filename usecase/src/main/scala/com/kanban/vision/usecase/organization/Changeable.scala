@@ -9,8 +9,10 @@ import scala.util.{Failure, Try}
 trait Changeable {
   def execute[RETURN](command: OrganizationCommand[RETURN]): Try[RETURN] = {
     command match {
-      case AddSimpleKanban(organizationId, prevalentSystem) =>
-        prevalentSystem.addKanbanOn(organizationId, Kanban.simpleOne()).asInstanceOf
+      case AddSimpleKanban(organizationId, name, prevalentSystem) => {
+        val newKanban = Kanban.simpleOneWithName(name)
+        prevalentSystem.addKanbanOn(organizationId, newKanban).asInstanceOf[Try[RETURN]]
+      }
       case _ => Failure(new IllegalStateException(s"Command not found ${command}"))
     }
   }
@@ -22,6 +24,7 @@ object Changeable {
 
   case class AddSimpleKanban(
                               organizationId: Id,
+                              name: String,
                               prevalentSystem: PrevalentSystem
                             ) extends OrganizationCommand[PrevalentSystem]
 

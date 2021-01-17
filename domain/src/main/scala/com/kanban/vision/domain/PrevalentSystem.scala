@@ -13,10 +13,15 @@ object PrevalentSystem {
 }
 
 case class PrevalentSystem(
-                   id: Id = UUID.randomUUID().toString,
-                   audit: Audit = Audit(),
-                   organizations: Map[Id, Organization] = Map.empty
-                 ) extends Domain {
+                            id: Id = UUID.randomUUID().toString,
+                            audit: Audit = Audit(),
+                            organizations: Map[Id, Organization] = Map.empty
+                          ) extends Domain {
+  def allKanbans(organizationId: Id) :List[Kanban] = organizations.get(organizationId) match {
+    case Some(organization) => organization.allKanbans()
+    case None => List.empty
+  }
+
   def addOrganization(organization: Organization): PrevalentSystem = copy(
     organizations = organizations ++ Map(organization.id -> organization)
   )

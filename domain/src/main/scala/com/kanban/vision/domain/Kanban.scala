@@ -5,11 +5,12 @@ import com.kanban.vision.domain.Domain.{Domain, Id}
 import java.util.UUID
 
 object Kanban {
-  def simpleOne() = new Kanban()
+  def simpleOneWithName(name: String) = new Kanban(name = name)
 }
 
 case class Kanban(
                    id: Id = UUID.randomUUID().toString,
                    audit: Audit = Audit(),
-                   flow: Flow = Flow()
+                   flow: Flow = Flow(),
+                   name: String
                  ) extends Domain

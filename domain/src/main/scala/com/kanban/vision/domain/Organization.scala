@@ -10,6 +10,8 @@ case class Organization(
                          name: String,
                          kanbans: Map[Id, Kanban] = Map.empty
                        ) extends Domain {
+  def allKanbans(): List[Kanban] = kanbans.values.toList
+
   def addKanban(kanban: Kanban): Organization = {
     this.copy(kanbans = kanbans.updated(kanban.id, kanban))
   }
