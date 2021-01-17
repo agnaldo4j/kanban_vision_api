@@ -83,7 +83,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
   }
 
-  private def execute[RETURN](query: SystemQuery[RETURN]) = SystemUseCase.execute[RETURN](query)
+  private def execute[RETURN](query: SystemQuery[RETURN]) = SystemUseCase.execute(query)
 
   private def execute[RETURN](command: SystemCommand[RETURN]) = SystemUseCase.execute(command)
 
