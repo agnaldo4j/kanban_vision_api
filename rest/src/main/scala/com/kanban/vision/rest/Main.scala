@@ -1,7 +1,7 @@
 package com.kanban.vision.rest
 
 import cats.effect.IO
-import com.kanban.vision.domain.Domain.Organization
+import com.kanban.vision.domain.Organization
 import com.kanban.vision.domain.StorableEvent.{AddOrganization, StorableEvent}
 import com.twitter.finagle.http.cookie.SameSite
 import com.twitter.finagle.http.filter.Cors

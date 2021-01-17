@@ -1,49 +1,34 @@
 package com.kanban.vision.usecase.system
 
-import com.kanban.vision.domain.Domain.{Id, System}
+import com.kanban.vision.domain.Domain.Id
+import com.kanban.vision.domain.{Organization, PrevalentSystem}
 import com.kanban.vision.usecase.system.Queryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
-import com.kanban.vision.usecase.system.SystemUseCase.{Fail, ManyResult, SingleResult, SystemResult}
+
+import scala.util.{Failure, Success, Try}
 
 trait Queryable {
-  def execute(query: SystemQuery): SystemResult = {
+  def execute[RETURN](query: SystemQuery[RETURN]): Try[RETURN] = {
     query match {
-      case GetAllOrganizations(system) =>
-        executeGetAllOrganizations(system)
-      case GetOrganizationByName(name, system) =>
-        executeGetOrganizationByName(name, system)
-      case GetOrganizationById(id, system) =>
-        executeGetOrganizationById(id, system)
-      case _ => Fail(s"Command not found: ${query}")
+      case GetAllOrganizations(prevalentSystem) =>
+        Success(prevalentSystem.allOrganizations().asInstanceOf[RETURN])
+      case GetOrganizationByName(name, prevalentSystem) =>
+        Success(prevalentSystem.organizationByName(name).asInstanceOf[RETURN])
+      case GetOrganizationById(id, prevalentSystem) =>
+        Success(prevalentSystem.organizationById(id).asInstanceOf[RETURN])
+      case _ => Failure(new IllegalStateException(s"Command not found: $query"))
     }
   }
-
-  private def executeGetAllOrganizations(system: System): ManyResult =
-    ManyResult(
-      system.organizations.values.toList
-    )
-
-  private def executeGetOrganizationById(id: Id, system: System) =
-    SingleResult(
-      system.organizations.get(id)
-    )
-
-  private def executeGetOrganizationByName(name: String, system: System) =
-    SingleResult(
-      system.organizations.values.find { organization =>
-        organization.name == name
-      }
-    )
 }
 
 object Queryable {
 
-  trait SystemQuery
+  trait SystemQuery[RETURN]
 
-  case class GetOrganizationByName(name: String, system: System)
-    extends SystemQuery
+  case class GetOrganizationByName(name: String, prevalentSystem: PrevalentSystem)
+    extends SystemQuery[Option[Organization]]
 
-  case class GetOrganizationById(id: Id, system: System) extends SystemQuery
+  case class GetOrganizationById(id: Id, prevalentSystem: PrevalentSystem) extends SystemQuery[Option[Organization]]
 
-  case class GetAllOrganizations(system: System) extends SystemQuery
+  case class GetAllOrganizations(prevalentSystem: PrevalentSystem) extends SystemQuery[List[Organization]]
 
 }

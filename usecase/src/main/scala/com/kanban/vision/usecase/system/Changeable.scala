@@ -1,50 +1,29 @@
 package com.kanban.vision.usecase.system
 
-import com.kanban.vision.domain.Domain.{Id, Organization, System}
+import com.kanban.vision.domain.Domain.Id
+import com.kanban.vision.domain.{Organization, PrevalentSystem}
 import com.kanban.vision.usecase.system.Changeable.{AddOrganization, DeleteOrganization, SystemCommand}
-import com.kanban.vision.usecase.system.SystemUseCase.{Fail, Success, SystemResult}
 
+import scala.util.{Failure, Success, Try}
 
 trait Changeable {
-  def execute(command: SystemCommand): SystemResult = {
+  def execute[RETURN](command: SystemCommand[RETURN]): Try[RETURN] = {
     command match {
-      case AddOrganization(name, system) =>
-        executeAddOrganization(name, system)
+      case AddOrganization(name, prevalentSystem) =>
+        Success(prevalentSystem.addOrganization(Organization(name = name)).asInstanceOf[RETURN])
       case DeleteOrganization(id, system) =>
-        executeDeleteOrganization(id, system)
-      case _ => Fail(s"Command not found ${command}")
-    }
-  }
-
-  private def executeAddOrganization(name: String, system: System) = {
-    val organization = Organization(name = name)
-    val newState = system.copy(
-      organizations =
-        system.organizations ++ Map(organization.id -> organization)
-    )
-    Success(newState)
-  }
-
-  private def executeDeleteOrganization(
-                                         id: Id,
-                                         system: System
-                                       ): SystemResult = {
-    system.organizations.get(id) match {
-      case Some(_) =>
-        val newState =
-          system.copy(organizations = system.organizations.removed(id))
-        Success(newState)
-      case None => Fail(s"Organization not found with id: $id")
+        Success(system.removeOrganization(id).asInstanceOf[RETURN])
+      case _ => Failure(new IllegalStateException(s"Command not found ${command}"))
     }
   }
 }
 
 object Changeable {
 
-  trait SystemCommand
+  trait SystemCommand[RETURN]
 
-  case class AddOrganization(name: String, system: System) extends SystemCommand
+  case class AddOrganization(name: String, prevalentSystem: PrevalentSystem) extends SystemCommand[PrevalentSystem]
 
-  case class DeleteOrganization(id: Id, system: System) extends SystemCommand
+  case class DeleteOrganization(id: Id, prevalentSystem: PrevalentSystem) extends SystemCommand[PrevalentSystem]
 
 }

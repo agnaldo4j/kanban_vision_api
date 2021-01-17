@@ -1,11 +1,13 @@
 package com.kanban.vision.usecase.system
 
-import com.kanban.vision.domain.Domain.{Id, Organization, System}
+import com.kanban.vision.domain.Domain.Id
+import com.kanban.vision.domain.{Organization, PrevalentSystem}
 import com.kanban.vision.usecase.system.Changeable.{AddOrganization, DeleteOrganization, SystemCommand}
 import com.kanban.vision.usecase.system.Queryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
-import com.kanban.vision.usecase.system.SystemUseCase.{ManyResult, SingleResult, Success, SystemResult}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+
+import scala.util.Success
 
 class SystemUseCaseSpec extends AnyFreeSpec {
   val organizationName = "Company"
@@ -14,11 +16,12 @@ class SystemUseCaseSpec extends AnyFreeSpec {
   "A System" - {
     "when empty" - {
 
-      val system = System()
+      val system = PrevalentSystem()
 
       "should not have any organization" in {
-        execute(GetAllOrganizations(system)) match {
-          case ManyResult(organizations) => organizations shouldBe List.empty
+        val result = execute[List[Organization]](GetAllOrganizations(system))
+        result match {
+          case Success(organizations: List[Organization]) => organizations shouldBe List.empty
           case _                         => fail()
         }
       }
@@ -34,7 +37,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
 
     "when already have one organization" - {
-      val system = System(initialState)
+      val system = PrevalentSystem(initialState)
 
       "should be able to add an organization" in {
         execute(AddOrganization("New Organization", system)) match {
@@ -46,9 +49,9 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
       "should be able to search an organization by name" in {
         execute(GetOrganizationByName(organizationName, system)) match {
-          case SingleResult(result) =>
+          case Success(result) =>
             result match {
-              case Some(organization) =>
+              case Some(organization: Organization) =>
                 organization.name shouldBe organizationName
                 organization.id shouldBe firstOrganizationId
               case None => fail()
@@ -59,7 +62,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
       "should be able to search an organization by id" in {
         execute(GetOrganizationById(firstOrganizationId, system)) match {
-          case SingleResult(result) =>
+          case Success(result) =>
             result match {
               case Some(organization) =>
                 organization.name shouldBe organizationName
@@ -80,19 +83,15 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
   }
 
-  def execute(query: SystemQuery): SystemResult = SystemUseCase.execute(query)
+  private def execute[RETURN](query: SystemQuery[RETURN]) = SystemUseCase.execute[RETURN](query)
 
-  def execute(command: SystemCommand): SystemResult =
-    SystemUseCase.execute(command)
+  private def execute[RETURN](command: SystemCommand[RETURN]) = SystemUseCase.execute(command)
 
-  def initialState: Map[Id, Organization] =
+  private def initialState: Map[Id, Organization] =
     Map(
       (
         firstOrganizationId,
         Organization(id = firstOrganizationId, name = organizationName)
       )
     )
-
-  implicit def SystemResultToSuccess(result: SystemResult): Success =
-    result.asInstanceOf[Success]
 }
