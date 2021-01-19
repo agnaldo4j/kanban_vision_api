@@ -1,7 +1,7 @@
 package com.kanban.vision.usecase.system
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Organization, PrevalentSystem}
+import com.kanban.vision.domain.{Organization, KanbanSystem}
 import com.kanban.vision.usecase.system.Changeable.{AddOrganization, DeleteOrganization, SystemCommand}
 import com.kanban.vision.usecase.system.Queryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
 import org.scalatest.freespec.AnyFreeSpec
@@ -16,7 +16,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
   "A System" - {
     "when empty" - {
 
-      val system = PrevalentSystem()
+      val system = KanbanSystem()
 
       "should not have any organization" in {
         val result = execute[List[Organization]](GetAllOrganizations(system))
@@ -37,7 +37,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
 
     "when already have one organization" - {
-      val system = PrevalentSystem(initialState)
+      val system = KanbanSystem(initialState)
 
       "should be able to add an organization" in {
         execute(AddOrganization("New Organization", system)) match {

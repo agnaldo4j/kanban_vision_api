@@ -1,7 +1,7 @@
 package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Kanban, Organization, PrevalentSystem}
+import com.kanban.vision.domain.{Kanban, Organization, KanbanSystem}
 import com.kanban.vision.usecase.organization.Changeable.{AddSimpleKanban, OrganizationCommand}
 import com.kanban.vision.usecase.organization.Queryable.{GetAllKanbansFrom, OrganizationQuery}
 import org.scalatest.freespec.AnyFreeSpec
@@ -16,20 +16,31 @@ class OrganizationUseCaseSpec extends AnyFreeSpec {
   "A System" - {
     "when empty" - {
 
-      val system = PrevalentSystem()
+      val system = KanbanSystem()
 
       "should not have any organization" in {
-        val result = execute[List[Kanban]](GetAllKanbansFrom("organization-id", system))
+        val result = execute[List[Kanban]](GetAllKanbansFrom(firstOrganizationId, system))
         result match {
           case Success(kanbans: List[Kanban]) => kanbans shouldBe List.empty
-          case _                         => fail()
+          case _ => fail()
         }
       }
 
       "should not be able to add a Kanban to organization" in {
-        execute(AddSimpleKanban("organization-id", "Default", system)) match {
+        execute(AddSimpleKanban(firstOrganizationId, "Default", system)) match {
           case Failure(error) =>
-            error.getMessage shouldBe "Not found organization with id: organization-id"
+            error.getMessage shouldBe s"Not found organization with id: $firstOrganizationId"
+          case _ => fail()
+        }
+      }
+    }
+
+    "when already have one organization" - {
+      val system = KanbanSystem(initialState)
+
+      "should be able to add an kanban on organization" in {
+        execute(AddSimpleKanban(firstOrganizationId, "Default", system)) match {
+          case Success(system) => system.kanbansFromnOrganizationById(firstOrganizationId).size shouldBe 1
           case _ => fail()
         }
       }
