@@ -7,7 +7,8 @@ import java.util.UUID
 object Board {
   def simpleOneWithName(name: String): Board = {
     val flow = Flow.simpleOne()
-    new Board(name = name, flow = flow)
+    val workers = Worker.baseWorkers()
+    new Board(name = name, flow = flow, workers = workers)
   }
 }
 
