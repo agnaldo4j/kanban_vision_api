@@ -1,7 +1,7 @@
 package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Kanban, Organization, KanbanSystem}
+import com.kanban.vision.domain.{Board, Organization, KanbanSystem}
 import com.kanban.vision.usecase.organization.Changeable.{AddSimpleKanban, OrganizationCommand}
 import com.kanban.vision.usecase.organization.Queryable.{GetAllKanbansFrom, OrganizationQuery}
 import org.scalatest.freespec.AnyFreeSpec
@@ -19,9 +19,9 @@ class OrganizationUseCaseSpec extends AnyFreeSpec {
       val system = KanbanSystem()
 
       "should not have any organization" in {
-        val result = execute[List[Kanban]](GetAllKanbansFrom(firstOrganizationId, system))
+        val result = execute[List[Board]](GetAllKanbansFrom(firstOrganizationId, system))
         result match {
-          case Success(kanbans: List[Kanban]) => kanbans shouldBe List.empty
+          case Success(kanbans: List[Board]) => kanbans shouldBe List.empty
           case _ => fail()
         }
       }

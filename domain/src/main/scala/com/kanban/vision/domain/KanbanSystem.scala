@@ -18,14 +18,14 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
-  def kanbansFromnOrganizationById(firstOrganizationId: Id): List[Kanban] = {
+  def kanbansFromnOrganizationById(firstOrganizationId: Id): List[Board] = {
     organizations.get(firstOrganizationId) match {
       case Some(organization) => organization.kanbans.values.toList
-      case None => List.empty[Kanban]
+      case None => List.empty[Board]
     }
   }
 
-  def allKanbans(organizationId: Id): List[Kanban] = organizations.get(organizationId) match {
+  def allKanbans(organizationId: Id): List[Board] = organizations.get(organizationId) match {
     case Some(organization) => organization.allKanbans()
     case None => List.empty
   }
@@ -46,7 +46,7 @@ case class KanbanSystem(
     this.copy(organizations = organizations - organizationId)
   }
 
-  def addKanbanOn(organizationId: Id, kanban: Kanban): Try[KanbanSystem] = {
+  def addKanbanOn(organizationId: Id, kanban: Board): Try[KanbanSystem] = {
     organizations.get(organizationId) match {
       case Some(organization) => Success(
         this.copy(

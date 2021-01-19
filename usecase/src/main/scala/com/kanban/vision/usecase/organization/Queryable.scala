@@ -1,7 +1,7 @@
 package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Kanban, KanbanSystem}
+import com.kanban.vision.domain.{Board, KanbanSystem}
 import com.kanban.vision.usecase.organization.Queryable.{GetAllKanbansFrom, OrganizationQuery}
 
 import scala.util.{Failure, Success, Try}
@@ -23,6 +23,6 @@ object Queryable {
   case class GetAllKanbansFrom(
                                 organizationId: Id,
                                 kanbanSystem: KanbanSystem
-                              ) extends OrganizationQuery[List[Kanban]]
+                              ) extends OrganizationQuery[List[Board]]
 
 }

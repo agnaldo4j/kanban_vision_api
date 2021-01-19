@@ -8,5 +8,12 @@ import scala.collection.SortedSet
 case class Flow(
                  id: Id = UUID.randomUUID().toString,
                  audit: Audit = Audit(),
-                 steps: SortedSet[FlowSteps] = SortedSet.empty
+                 steps: SortedSet[FlowStep] = SortedSet.empty
                ) extends Domain
+
+object Flow {
+  def simpleOne(): Flow = {
+    val flowSteps = FlowStep.simpleOne()
+    new Flow(steps = flowSteps)
+  }
+}
