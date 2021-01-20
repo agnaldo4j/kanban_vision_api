@@ -6,9 +6,25 @@ import java.util.UUID
 
 object Board {
   def simpleOneWithName(name: String): Board = {
-    val flow = Flow.simpleOne()
-    val workers = Worker.baseWorkers()
-    new Board(name = name, flow = flow, workers = workers)
+    simpleOne(
+      name = name,
+      flow = Flow.simpleOne(),
+      workers = Worker.baseWorkers()
+    )
+  }
+
+  def simpleOne(
+                 id: String = UUID.randomUUID().toString,
+                 flow: Flow = Flow.simpleOne(),
+                 workers: List[Worker] = Worker.baseWorkers(),
+                 name: String
+               ): Board = {
+    new Board(
+      id = id,
+      name = name,
+      flow = flow,
+      workers = workers
+    )
   }
 }
 

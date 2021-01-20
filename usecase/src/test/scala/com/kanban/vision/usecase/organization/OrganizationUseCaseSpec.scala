@@ -2,8 +2,8 @@ package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain.{Board, Organization, KanbanSystem}
-import com.kanban.vision.usecase.organization.Changeable.{AddSimpleKanban, OrganizationCommand}
-import com.kanban.vision.usecase.organization.Queryable.{GetAllKanbansFrom, OrganizationQuery}
+import com.kanban.vision.usecase.organization.Changeable.{AddSimpleBoard, OrganizationCommand}
+import com.kanban.vision.usecase.organization.Queryable.{GetAllBoardsFrom, OrganizationQuery}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
@@ -19,7 +19,7 @@ class OrganizationUseCaseSpec extends AnyFreeSpec {
       val system = KanbanSystem()
 
       "should not have any organization" in {
-        val result = execute[List[Board]](GetAllKanbansFrom(firstOrganizationId, system))
+        val result = execute[List[Board]](GetAllBoardsFrom(firstOrganizationId, system))
         result match {
           case Success(kanbans: List[Board]) => kanbans shouldBe List.empty
           case _ => fail()
@@ -27,7 +27,7 @@ class OrganizationUseCaseSpec extends AnyFreeSpec {
       }
 
       "should not be able to add a Kanban to organization" in {
-        execute(AddSimpleKanban(firstOrganizationId, "Default", system)) match {
+        execute(AddSimpleBoard(firstOrganizationId, "Default", system)) match {
           case Failure(error) =>
             error.getMessage shouldBe s"Not found organization with id: $firstOrganizationId"
           case _ => fail()
@@ -39,8 +39,8 @@ class OrganizationUseCaseSpec extends AnyFreeSpec {
       val system = KanbanSystem(initialState)
 
       "should be able to add an kanban on organization" in {
-        execute(AddSimpleKanban(firstOrganizationId, "Default", system)) match {
-          case Success(system) => system.kanbansFromnOrganizationById(firstOrganizationId).size shouldBe 1
+        execute(AddSimpleBoard(firstOrganizationId, "Default", system)) match {
+          case Success(system) => system.allBoards(firstOrganizationId).size shouldBe 1
           case _ => fail()
         }
       }

@@ -3,7 +3,6 @@ package com.kanban.vision.domain
 import com.kanban.vision.domain.Domain.{Domain, Id}
 
 import java.util.UUID
-import scala.collection.SortedSet
 import scala.util.{Failure, Success, Try}
 
 object KanbanSystem {
@@ -18,15 +17,14 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
-  def kanbansFromnOrganizationById(firstOrganizationId: Id): List[Board] = {
-    organizations.get(firstOrganizationId) match {
-      case Some(organization) => organization.kanbans.values.toList
-      case None => List.empty[Board]
-    }
+  def getFlowFrom(organizationId: Id, boardId: Id): Option[Flow] = {
+    organizations
+      .get(organizationId)
+      .flatMap(_.boardById(boardId))
   }
 
-  def allKanbans(organizationId: Id): List[Board] = organizations.get(organizationId) match {
-    case Some(organization) => organization.allKanbans()
+  def allBoards(organizationId: Id): List[Board] = organizations.get(organizationId) match {
+    case Some(organization) => organization.allBoards()
     case None => List.empty
   }
 
@@ -46,16 +44,14 @@ case class KanbanSystem(
     this.copy(organizations = organizations - organizationId)
   }
 
-  def addKanbanOn(organizationId: Id, kanban: Board): Try[KanbanSystem] = {
-    organizations.get(organizationId) match {
-      case Some(organization) => Success(
-        this.copy(
-          organizations = organizations.updated(organization.id, organization.addKanban(kanban))
-        )
+  def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {
+    case Some(organization) => Success(
+      this.copy(
+        organizations = organizations.updated(organization.id, organization.addBoard(board))
       )
-      case None => Failure(
-        new IllegalStateException(s"Not found organization with id: ${organizationId}")
-      )
-    }
+    )
+    case None => Failure(
+      new IllegalStateException(s"Not found organization with id: ${organizationId}")
+    )
   }
 }

@@ -8,11 +8,16 @@ case class Organization(
                          id: Id = UUID.randomUUID().toString,
                          audit: Audit = Audit(),
                          name: String,
-                         kanbans: Map[Id, Board] = Map.empty
+                         boards: Map[Id, Board] = Map.empty
                        ) extends Domain {
-  def allKanbans(): List[Board] = kanbans.values.toList
+  def boardById(boardId: Id) = boards.get(boardId) match {
+    case Some(board) => Some(board.flow)
+    case None => None
+  }
 
-  def addKanban(kanban: Board): Organization = {
-    this.copy(kanbans = kanbans.updated(kanban.id, kanban))
+  def allBoards(): List[Board] = boards.values.toList
+
+  def addBoard(board: Board): Organization = {
+    this.copy(boards = boards.updated(board.id, board))
   }
 }

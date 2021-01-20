@@ -13,7 +13,7 @@ case class Flow(
 
 object Flow {
   def simpleOne(): Flow = {
-    val flowSteps = FlowStep.simpleOne()
+    val flowSteps = FlowStep.sample()
     new Flow(steps = flowSteps)
   }
 }
