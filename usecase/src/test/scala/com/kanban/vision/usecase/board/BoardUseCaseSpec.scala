@@ -20,7 +20,7 @@ class BoardUseCaseSpec extends AnyFreeSpec {
 
       "should have default flow structure" in {
         execute(GetFlowFrom(firstOrganizationId, simpleBoardId, system)) match {
-          case Success(Some(flow)) => flow.steps.size shouldBe 7
+          case Success(Some(flow)) => flow.steps.size shouldBe 9
           case _ => fail()
         }
       }

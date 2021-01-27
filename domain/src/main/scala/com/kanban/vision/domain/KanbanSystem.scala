@@ -3,7 +3,7 @@ package com.kanban.vision.domain
 import com.kanban.vision.domain.Domain.{Domain, Id}
 
 import java.util.UUID
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 object KanbanSystem {
   def apply(): KanbanSystem = new KanbanSystem()
