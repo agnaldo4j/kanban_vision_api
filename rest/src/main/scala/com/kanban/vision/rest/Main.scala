@@ -45,7 +45,7 @@ object Main extends App with Endpoint.Module[IO] {
         result.map { t =>
           t match {
             case AddOrganization(name) => AddOrganization(name = name)
-            case _                     => AddOrganization(name = "Undefined")
+            case _ => AddOrganization(name = "Undefined")
           }
         }
       )
@@ -66,8 +66,13 @@ object Main extends App with Endpoint.Module[IO] {
   )
 
   val filters = Function.chain(Seq(auth))
-  val endpoints =
-    Bootstrap.serve[Application.Json](apiV2 :+: api :+: apiV3).compile
+  val endpoints = Bootstrap.serve[Application.Json](
+    RestApiOrganization.addOrganization :+:
+      RestApiOrganization.getOrganization :+:
+      apiV2 :+:
+      api :+:
+      apiV3
+  ).compile
   val compiled = filters(endpoints)
   val service = Endpoint.toService(compiled)
 
