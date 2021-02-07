@@ -1,8 +1,8 @@
 package com.kanban.vision.domain
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 case class Audit(
-                  created: LocalDateTime = LocalDateTime.now(),
-                  updated: Option[LocalDateTime] = None
+                  created: Instant = Instant.now(),
+                  updated: Option[Instant] = None
                 )
