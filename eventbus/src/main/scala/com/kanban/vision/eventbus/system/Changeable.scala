@@ -1,9 +1,9 @@
 package com.kanban.vision.eventbus.system
 
-import com.kanban.vision.adapters.Storage
 import com.kanban.vision.domain.KanbanSystem
-import com.kanban.vision.domain.StorableEvent.{AddOrganizationOnSystem, StorableEvent}
+import com.kanban.vision.eventbus.EventBusCommand.{AddOrganizationOnSystem, Command}
 import com.kanban.vision.domain.SystemChangeable.AddOrganization
+import com.kanban.vision.eventbus.Storage
 import com.kanban.vision.usecase.system.SystemUseCase
 
 import scala.util.{Failure, Try}
@@ -12,7 +12,7 @@ trait SystemChangeable {
   val storage: Storage
   var systemState: KanbanSystem
 
-  def execute(event: StorableEvent): Try[KanbanSystem] = {
+  def execute(event: Command): Try[KanbanSystem] = {
     storage.log(event)
     event match {
       case AddOrganizationOnSystem(name) => executeAddOrganization(name)

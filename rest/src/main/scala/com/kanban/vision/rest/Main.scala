@@ -2,7 +2,7 @@ package com.kanban.vision.rest
 
 import cats.effect.IO
 import com.kanban.vision.domain.Organization
-import com.kanban.vision.domain.StorableEvent.{AddOrganizationOnSystem, StorableEvent}
+import com.kanban.vision.eventbus.EventBusCommand.{AddOrganizationOnSystem, Command}
 import com.kanban.vision.eventbus.EventBus
 import com.twitter.finagle.http.cookie.SameSite
 import com.twitter.finagle.http.filter.Cors
@@ -41,7 +41,7 @@ object Main extends App with Endpoint.Module[IO] {
 
   val apiV2: Endpoint[IO, List[AddOrganizationOnSystem]] = get("v2" :: path[String]) {
     title: String =>
-      val result = List.empty[StorableEvent]
+      val result = List.empty[Command]
       Ok(
         result.map { t =>
           t match {

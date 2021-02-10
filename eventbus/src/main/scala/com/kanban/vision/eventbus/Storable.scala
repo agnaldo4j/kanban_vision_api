@@ -1,9 +1,8 @@
 package com.kanban.vision.eventbus
 
-import com.kanban.vision.adapters.Storage
+import EventBusCommand.Command
+import EventBusQuery.Query
 import com.kanban.vision.domain.KanbanSystem
-import com.kanban.vision.domain.StorableEvent.StorableEvent
-import com.kanban.vision.domain.SystemQueryable.SystemQuery
 
 trait Storable {
   var systemState: KanbanSystem
@@ -18,9 +17,9 @@ trait Storable {
     storage.snapshot(systemState)
   }
 
-  def apply(event: StorableEvent)
+  def apply(event: Command)
 
-  def apply(event: SystemQuery)
+  def apply(event: Query)
 
   private def reloadSystem() {
     systemState = storage.loadSystem() match {

@@ -1,12 +1,11 @@
 package com.kanban.vision.eventbus
 
-import com.kanban.vision.adapters.Storage
-import com.kanban.vision.domain.{KanbanSystem, StorableEvent}
+import com.kanban.vision.domain.KanbanSystem
 
 class DefaultStorage extends Storage {
-  override def log(event: StorableEvent.StorableEvent): Unit = println("log")
+  override def log(event: EventBusCommand.Command): Unit = println("log")
 
-  override def load(): List[StorableEvent.StorableEvent] = List()
+  override def load(): List[EventBusCommand.Command] = List()
 
   override def loadSystem(): Option[KanbanSystem] = Some(KanbanSystem())
 

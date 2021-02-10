@@ -1,9 +1,8 @@
 package com.kanban.vision.eventbus
 
-import com.kanban.vision.adapters.Storage
 import com.kanban.vision.domain.KanbanSystem
-import com.kanban.vision.domain.StorableEvent.StorableEvent
-import com.kanban.vision.domain.SystemQueryable.SystemQuery
+import EventBusCommand.Command
+import EventBusQuery.Query
 import com.kanban.vision.eventbus.system.{SystemChangeable, SystemQueryable}
 
 object EventBus {
@@ -17,6 +16,6 @@ class EventBus(val storage: Storage)
     with SystemChangeable {
   override var systemState: KanbanSystem = storage.loadSystem().getOrElse(KanbanSystem())
 
-  override def apply(event: StorableEvent): Unit = execute(event)
-  override def apply(event: SystemQuery): Unit = execute(event)
+  override def apply(event: Command): Unit = execute(event)
+  override def apply(event: Query): Unit = execute(event)
 }

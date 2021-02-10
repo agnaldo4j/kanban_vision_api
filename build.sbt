@@ -1,6 +1,6 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
-ThisBuild / organization := "com.agnaldo4j"
+ThisBuild / organization := "com.thelambdadev"
 ThisBuild / scalaVersion := "2.13.3"
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / name         := "kanban-vision-api"
@@ -53,16 +53,6 @@ lazy val config = (project in file("config"))
     )
   ).disablePlugins(AssemblyPlugin)
 
-lazy val quillPersistence = (project in file("quill-persistence"))
-  .dependsOn(config)
-  .settings(
-    name := "QuillPersistence",
-    libraryDependencies ++= Seq(
-      "org.postgresql" % "postgresql" % "42.2.17",
-      "io.getquill" %% "quill-jdbc" % "3.5.3"
-    ).map(_.exclude("org.slf4j", "*"))
-  ).disablePlugins(AssemblyPlugin)
-
 lazy val useCase = (project in file("usecase"))
   .dependsOn(adapters)
   .settings(
@@ -80,12 +70,22 @@ lazy val eventBus = (project in file("eventbus"))
     name := "EventBus",
   ).disablePlugins(AssemblyPlugin)
 
+lazy val quillPersistence = (project in file("quill-persistence"))
+  .dependsOn(config, eventBus)
+  .settings(
+    name := "QuillPersistence",
+    libraryDependencies ++= Seq(
+      "org.postgresql" % "postgresql" % "42.2.17",
+      "io.getquill" %% "quill-jdbc" % "3.5.3"
+    ).map(_.exclude("org.slf4j", "*"))
+  ).disablePlugins(AssemblyPlugin)
+
 lazy val rest = (project in file("rest"))
-  .dependsOn(quillPersistence, eventBus)
+  .dependsOn(quillPersistence)
   .settings(
     name := "Rest",
     assemblyMergeStrategy in assembly := defaultMergeStrategy,
-    assemblyJarName in assembly := "phanes.jar",
+    assemblyJarName in assembly := "kanban-vision-api.jar",
     test in assembly := {},
     libraryDependencies ++= Seq(
       "com.github.finagle" %% "finchx-core" % "0.32.1",

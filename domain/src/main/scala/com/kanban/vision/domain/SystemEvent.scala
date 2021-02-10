@@ -14,13 +14,13 @@ object SystemChangeable {
 
 object SystemQueryable {
 
-  trait SystemQuery
+  trait SystemQueryable
 
-  case class GetOrganizationByName(name: String, kanbanSystem: KanbanSystem) extends SystemQuery
+  case class GetOrganizationByName(name: String, kanbanSystem: KanbanSystem) extends SystemQueryable
 
-  case class GetOrganizationById(id: Id, kanbanSystem: KanbanSystem) extends SystemQuery
+  case class GetOrganizationById(id: Id, kanbanSystem: KanbanSystem) extends SystemQueryable
 
-  case class GetAllOrganizations(kanbanSystem: KanbanSystem) extends SystemQuery
+  case class GetAllOrganizations(kanbanSystem: KanbanSystem) extends SystemQueryable
 
 }
 

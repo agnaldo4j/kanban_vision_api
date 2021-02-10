@@ -1,11 +1,11 @@
 package com.kanban.vision.usecase.system
 
-import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
+import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
 
 import scala.util.{Failure, Success, Try}
 
 trait Queryable {
-  def execute[RETURN](query: SystemQuery): Try[RETURN] = {
+  def execute[RETURN](query: SystemQueryable): Try[RETURN] = {
     query match {
       case GetAllOrganizations(kanbanSystem) =>
         Success(kanbanSystem.allOrganizations().asInstanceOf[RETURN])

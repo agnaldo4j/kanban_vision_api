@@ -1,21 +1,31 @@
 package com.kanban.vision.rest
 
 import cats.effect.IO
-import com.kanban.vision.domain.StorableEvent.AddOrganizationOnSystem
+import com.kanban.vision.eventbus.EventBusCommand.AddOrganizationOnSystem
+import com.kanban.vision.eventbus.EventBusQuery.GetOrganizationByNameFromSystem
+import com.kanban.vision.domain.Organization
 import com.kanban.vision.eventbus.EventBus
-import com.kanban.vision.rest.Main.path
+import com.kanban.vision.rest.Main.{get, path}
 import io.finch.Endpoint.post
-import io.finch.{BadRequest, Endpoint, Ok}
+import io.finch.{BadRequest, Endpoint, InternalServerError, Ok}
 
 import scala.util.{Failure, Success}
 
 object RestApiOrganization {
   def addOrganization(eventBus: EventBus): Endpoint[IO, String] = post("organizations") {
-
-    val result = eventBus.execute(AddOrganizationOnSystem("name"))
-    result match {
+    eventBus.execute(AddOrganizationOnSystem("name")) match {
       case Success(_) => Ok("Ok")
       case Failure(ex: Exception) => BadRequest(ex)
+      case Failure(ex) => InternalServerError(new IllegalStateException(ex))
+    }
+  }
+
+  def getOrganization(eventBus: EventBus): Endpoint[IO, Option[Organization]] = get("organizations" :: path[String]) {
+    name: String =>
+    eventBus.execute[Option[Organization]](GetOrganizationByNameFromSystem(name)) match {
+      case Success(result) => Ok(result)
+      case Failure(ex: Exception) => BadRequest(ex)
+      case Failure(ex) => InternalServerError(new IllegalStateException(ex))
     }
   }
 }

@@ -2,7 +2,7 @@ package com.kanban.vision.usecase.system
 
 import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}
-import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
+import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
 import com.kanban.vision.domain.{KanbanSystem, Organization}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -83,7 +83,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
   }
 
-  private def execute[RETURN](query: SystemQuery): Try[RETURN] = SystemUseCase.execute(query)
+  private def execute[RETURN](query: SystemQueryable): Try[RETURN] = SystemUseCase.execute(query)
 
   private def execute[RETURN](command: SystemCommand): Try[KanbanSystem] = SystemUseCase.execute(command)
 
