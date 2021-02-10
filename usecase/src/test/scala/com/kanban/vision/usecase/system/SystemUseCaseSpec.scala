@@ -1,13 +1,13 @@
 package com.kanban.vision.usecase.system
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Organization, KanbanSystem}
-import com.kanban.vision.usecase.system.Changeable.{AddOrganization, DeleteOrganization, SystemCommand}
-import com.kanban.vision.usecase.system.Queryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
+import com.kanban.vision.domain.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}
+import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
+import com.kanban.vision.domain.{KanbanSystem, Organization}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
-import scala.util.Success
+import scala.util.{Success, Try}
 
 class SystemUseCaseSpec extends AnyFreeSpec {
   val organizationName = "Company"
@@ -48,7 +48,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       }
 
       "should be able to search an organization by name" in {
-        execute(GetOrganizationByName(organizationName, system)) match {
+        execute[Option[Organization]](GetOrganizationByName(organizationName, system)) match {
           case Success(result) =>
             result match {
               case Some(organization: Organization) =>
@@ -61,7 +61,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       }
 
       "should be able to search an organization by id" in {
-        execute(GetOrganizationById(firstOrganizationId, system)) match {
+        execute[Option[Organization]](GetOrganizationById(firstOrganizationId, system)) match {
           case Success(result) =>
             result match {
               case Some(organization) =>
@@ -83,9 +83,9 @@ class SystemUseCaseSpec extends AnyFreeSpec {
     }
   }
 
-  private def execute[RETURN](query: SystemQuery[RETURN]) = SystemUseCase.execute(query)
+  private def execute[RETURN](query: SystemQuery): Try[RETURN] = SystemUseCase.execute(query)
 
-  private def execute[RETURN](command: SystemCommand[RETURN]) = SystemUseCase.execute(command)
+  private def execute[RETURN](command: SystemCommand): Try[KanbanSystem] = SystemUseCase.execute(command)
 
   private def initialState: Map[Id, Organization] =
     Map(

@@ -6,8 +6,7 @@ object StorableEvent {
 
   trait StorableEvent
 
-  case class AddOrganization(name: String) extends StorableEvent
+  case class AddOrganizationOnSystem(name: String) extends StorableEvent
 
-  case class DeleteOrganization(id: Id) extends StorableEvent
+  case class DeleteOrganizationFromSystem(id: Id) extends StorableEvent
 }
-

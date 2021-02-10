@@ -2,12 +2,25 @@ package com.kanban.vision.domain
 
 import com.kanban.vision.domain.Domain.Id
 
-object SystemEvent {
+object SystemChangeable {
 
-  trait SystemEvent
+  trait SystemCommand
 
-  case class AddOrganization(name: String) extends SystemEvent
+  case class AddOrganization(name: String, kanbanSystem: KanbanSystem) extends SystemCommand
 
-  case class DeleteOrganization(id: Id) extends SystemEvent
+  case class DeleteOrganization(id: Id, kanbanSystem: KanbanSystem) extends SystemCommand
+
+}
+
+object SystemQueryable {
+
+  trait SystemQuery
+
+  case class GetOrganizationByName(name: String, kanbanSystem: KanbanSystem) extends SystemQuery
+
+  case class GetOrganizationById(id: Id, kanbanSystem: KanbanSystem) extends SystemQuery
+
+  case class GetAllOrganizations(kanbanSystem: KanbanSystem) extends SystemQuery
+
 }
 

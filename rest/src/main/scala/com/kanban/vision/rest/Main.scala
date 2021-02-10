@@ -2,7 +2,8 @@ package com.kanban.vision.rest
 
 import cats.effect.IO
 import com.kanban.vision.domain.Organization
-import com.kanban.vision.domain.StorableEvent.{AddOrganization, StorableEvent}
+import com.kanban.vision.domain.StorableEvent.{AddOrganizationOnSystem, StorableEvent}
+import com.kanban.vision.eventbus.EventBus
 import com.twitter.finagle.http.cookie.SameSite
 import com.twitter.finagle.http.filter.Cors
 import com.twitter.finagle.http.{Cookie, Request, Response, Status}
@@ -38,14 +39,14 @@ object Main extends App with Endpoint.Module[IO] {
     ).withCookie(cookie)
   }
 
-  val apiV2: Endpoint[IO, List[AddOrganization]] = get("v2" :: path[String]) {
+  val apiV2: Endpoint[IO, List[AddOrganizationOnSystem]] = get("v2" :: path[String]) {
     title: String =>
       val result = List.empty[StorableEvent]
       Ok(
         result.map { t =>
           t match {
-            case AddOrganization(name) => AddOrganization(name = name)
-            case _ => AddOrganization(name = "Undefined")
+            case AddOrganizationOnSystem(name) => AddOrganizationOnSystem(name = name)
+            case _ => AddOrganizationOnSystem(name = "Undefined")
           }
         }
       )
@@ -65,10 +66,10 @@ object Main extends App with Endpoint.Module[IO] {
     supportsCredentials = true
   )
 
+  val eventBus = EventBus()
   val filters = Function.chain(Seq(auth))
   val endpoints = Bootstrap.serve[Application.Json](
-    RestApiOrganization.addOrganization :+:
-      RestApiOrganization.getOrganization :+:
+    RestApiOrganization.addOrganization(eventBus) :+:
       apiV2 :+:
       api :+:
       apiV3
