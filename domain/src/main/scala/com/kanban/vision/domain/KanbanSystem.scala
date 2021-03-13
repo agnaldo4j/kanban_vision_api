@@ -28,9 +28,11 @@ case class KanbanSystem(
     case None => List.empty
   }
 
-  def addOrganization(organization: Organization): KanbanSystem = copy(
-    organizations = organizations ++ Map(organization.id -> organization)
-  )
+  def addOrganization(organization: Organization): (KanbanSystem, Organization) = {
+    val newOrganizations = organizations ++ Map(organization.id -> organization)
+    val newKanbanSystem = copy(organizations = newOrganizations)
+    (newKanbanSystem, organization)
+  }
 
   def organizationByName(name: String) = organizations.values.find { organization =>
     organization.name == name
@@ -40,8 +42,13 @@ case class KanbanSystem(
 
   def allOrganizations() = organizations.values.toList
 
-  def removeOrganization(organizationId: Id): KanbanSystem = {
-    this.copy(organizations = organizations - organizationId)
+  def removeOrganization(organizationId: Id): (KanbanSystem, Option[Organization]) = {
+    organizations.get(organizationId) match {
+      case Some(organization) =>
+        val newKanbanSystem = copy(organizations = organizations - organizationId)
+        (newKanbanSystem, Some(organization))
+      case None => (this, None)
+    }
   }
 
   def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {

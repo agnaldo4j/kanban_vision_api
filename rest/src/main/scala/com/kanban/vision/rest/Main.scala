@@ -70,6 +70,7 @@ object Main extends App with Endpoint.Module[IO] {
   val filters = Function.chain(Seq(auth))
   val endpoints = Bootstrap.serve[Application.Json](
     RestApiOrganization.addOrganization(eventBus) :+:
+      RestApiOrganization.getOrganization(eventBus) :+:
       apiV2 :+:
       api :+:
       apiV3

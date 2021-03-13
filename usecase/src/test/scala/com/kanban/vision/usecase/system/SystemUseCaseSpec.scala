@@ -27,10 +27,11 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       }
 
       "should be able to add an organization" in {
-        execute(AddOrganization(organizationName, system)) match {
-          case Success(newSystemState) =>
+        execute[Organization](AddOrganization(organizationName, system)) match {
+          case Success((newSystemState, organization)) =>
             newSystemState.organizations.nonEmpty shouldBe true
             newSystemState.organizations.values.head.name shouldBe organizationName
+            organization.name shouldBe organizationName
           case _ => fail()
         }
       }
@@ -40,9 +41,10 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       val system = KanbanSystem(initialState)
 
       "should be able to add an organization" in {
-        execute(AddOrganization("New Organization", system)) match {
-          case Success(newSystemState) =>
+        execute[Organization](AddOrganization("New Organization", system)) match {
+          case Success((newSystemState, organization)) =>
             newSystemState.organizations.values.size shouldBe 2
+            organization.name shouldBe "New Organization"
           case _ => fail()
         }
       }
@@ -74,8 +76,8 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       }
 
       "should be able to delete an organization by id" in {
-        execute(DeleteOrganization(firstOrganizationId, system)) match {
-          case Success(newSystemState) =>
+        execute[Option[Organization]](DeleteOrganization(firstOrganizationId, system)) match {
+          case Success((newSystemState, _)) =>
             newSystemState.organizations shouldBe Map.empty
           case _ => fail()
         }
@@ -85,7 +87,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
   private def execute[RETURN](query: SystemQueryable): Try[RETURN] = SystemUseCase.execute(query)
 
-  private def execute[RETURN](command: SystemCommand): Try[KanbanSystem] = SystemUseCase.execute(command)
+  private def execute[RETURN](command: SystemCommand): Try[(KanbanSystem, RETURN)] = SystemUseCase.execute(command)
 
   private def initialState: Map[Id, Organization] =
     Map(

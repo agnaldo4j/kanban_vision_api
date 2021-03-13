@@ -12,7 +12,7 @@ trait SystemChangeable {
   val storage: Storage
   var systemState: KanbanSystem
 
-  def execute(event: Command): Try[KanbanSystem] = {
+  def execute[DOMAIN](event: Command): Try[(KanbanSystem, DOMAIN)] = {
     storage.log(event)
     event match {
       case AddOrganizationOnSystem(name) => executeAddOrganization(name)
@@ -20,7 +20,7 @@ trait SystemChangeable {
     }
   }
 
-  private def executeAddOrganization(name: String): Try[KanbanSystem] = {
+  private def executeAddOrganization[DOMAIN](name: String): Try[(KanbanSystem, DOMAIN)] = {
     val result = SystemUseCase.execute(AddOrganization(name, systemState))
     if (result.isSuccess) systemState = result.get
     result

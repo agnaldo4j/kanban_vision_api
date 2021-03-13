@@ -6,15 +6,20 @@ import com.kanban.vision.eventbus.EventBusQuery.GetOrganizationByNameFromSystem
 import com.kanban.vision.domain.Organization
 import com.kanban.vision.eventbus.EventBus
 import com.kanban.vision.rest.Main.{get, path}
+import com.kanban.vision.rest.presentation.Presentation._
 import io.finch.Endpoint.post
+import io.finch.catsEffect.jsonBody
 import io.finch.{BadRequest, Endpoint, InternalServerError, Ok}
+import io.finch.circe._
 
 import scala.util.{Failure, Success}
 
 object RestApiOrganization {
-  def addOrganization(eventBus: EventBus): Endpoint[IO, String] = post("organizations") {
-    eventBus.execute(AddOrganizationOnSystem("name")) match {
-      case Success(_) => Ok("Ok")
+  def addOrganization(eventBus: EventBus): Endpoint[IO, AddedOrganization] = post(
+    "organizations" :: jsonBody[NewOrganization]
+  ) { newOrganization: NewOrganization =>
+    eventBus.execute[Organization](AddOrganizationOnSystem(newOrganization.name)) match {
+      case Success((_, organization)) => Ok(AddedOrganization(organization))
       case Failure(ex: Exception) => BadRequest(ex)
       case Failure(ex) => InternalServerError(new IllegalStateException(ex))
     }
