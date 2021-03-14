@@ -2,7 +2,7 @@ package com.kanban.vision.rest
 
 import cats.effect.IO
 import com.kanban.vision.eventbus.EventBusCommand.AddOrganizationOnSystem
-import com.kanban.vision.eventbus.EventBusQuery.GetOrganizationByNameFromSystem
+import com.kanban.vision.eventbus.EventBusQuery.{GetAllOrganizationsFromSystem, GetOrganizationByNameFromSystem}
 import com.kanban.vision.domain.Organization
 import com.kanban.vision.eventbus.EventBus
 import com.kanban.vision.rest.Main.{get, path}
@@ -22,6 +22,13 @@ object RestApiOrganization {
       case Success((_, organization)) => Ok(AddedOrganization(organization))
       case Failure(ex: Exception) => BadRequest(ex)
       case Failure(ex) => InternalServerError(new IllegalStateException(ex))
+    }
+  }
+
+  def getOrganizations(eventBus: EventBus): Endpoint[IO, List[Organization]] = get("organizations") {
+    eventBus.execute[List[Organization]](GetAllOrganizationsFromSystem()) match {
+      case Success(result) => Ok(result)
+      case Failure(_) => Ok(List.empty)
     }
   }
 

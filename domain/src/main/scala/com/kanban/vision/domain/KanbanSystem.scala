@@ -53,7 +53,7 @@ case class KanbanSystem(
 
   def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {
     case Some(organization) => Success(
-      this.copy(
+      copy(
         organizations = organizations.updated(organization.id, organization.addBoard(board))
       )
     )

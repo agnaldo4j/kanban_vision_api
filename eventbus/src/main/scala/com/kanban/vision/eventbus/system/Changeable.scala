@@ -21,8 +21,6 @@ trait SystemChangeable {
   }
 
   private def executeAddOrganization[DOMAIN](name: String): Try[(KanbanSystem, DOMAIN)] = {
-    val result = SystemUseCase.execute(AddOrganization(name, systemState))
-    if (result.isSuccess) systemState = result.get
-    result
+    SystemUseCase.execute(AddOrganization(name, systemState))
   }
 }
