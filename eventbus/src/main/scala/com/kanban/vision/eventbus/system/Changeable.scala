@@ -14,10 +14,14 @@ trait SystemChangeable {
 
   def execute[DOMAIN](event: Command): Try[(KanbanSystem, DOMAIN)] = {
     storage.log(event)
-    event match {
+    val result = event match {
       case AddOrganizationOnSystem(name) => executeAddOrganization(name)
       case _ => Failure(new IllegalStateException(s"Event not found: $event"))
     }
+
+    if (result.isSuccess) systemState = result.get._1
+
+    result
   }
 
   private def executeAddOrganization[DOMAIN](name: String): Try[(KanbanSystem, DOMAIN)] = {
