@@ -17,11 +17,11 @@ object OrganizationChangeable {
 
 object OrganizationQueryable {
 
-  trait OrganizationQuery[RETURN]
+  trait OrganizationQuery
 
   case class GetAllBoardsFrom(
                                organizationId: Id,
                                kanbanSystem: KanbanSystem
-                             ) extends OrganizationQuery[List[Board]]
+                             ) extends OrganizationQuery
 
 }

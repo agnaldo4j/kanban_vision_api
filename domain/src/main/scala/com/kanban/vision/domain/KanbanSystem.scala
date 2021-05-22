@@ -17,35 +17,41 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
-  def getFlowFrom(organizationId: Id, boardId: Id): Option[Flow] = {
+  def getFlowFrom(organizationId: Id, boardId: Id): Try[Option[Flow]] = Success(
     organizations
       .get(organizationId)
       .flatMap(_.boardById(boardId))
-  }
+  )
 
-  def allBoards(organizationId: Id): List[Board] = organizations.get(organizationId) match {
-    case Some(organization) => organization.allBoards()
-    case None => List.empty
+  def allBoards(organizationId: Id): Try[List[Board]] = {
+    val result = organizations.get(organizationId) match {
+      case Some(organization) => organization.allBoards()
+      case None => List.empty
+    }
+    Success(result)
   }
 
   def addOrganization(organization: Organization) = organizationByName(organization.name) match {
-    case Some(existentOrganization) => {
+    case Success(Some(existentOrganization)) => {
       Failure(IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}"))
     }
-    case None => {
+    case Success(None) => {
       val newOrganizations = organizations ++ Map(organization.id -> organization)
       val newKanbanSystem = copy(organizations = newOrganizations)
       Success(KanbanSystemChanged[Organization](newKanbanSystem, organization))
     }
+    case Failure(ex) => Failure(ex)
   }
 
-  def organizationByName(name: String) = organizations.values.find {
-    _.name == name
-  }
+  def organizationByName(name: String): Try[Option[Organization]] = Success(
+    organizations.values.find {
+      _.name == name
+    }
+  )
 
-  def organizationById(organizationId: Id) = organizations.get(organizationId)
+  def organizationById(organizationId: Id): Try[Option[Organization]] = Success(organizations.get(organizationId))
 
-  def allOrganizations() = organizations.values.toList
+  def allOrganizations(): Try[List[Organization]] = Success(organizations.values.toList)
 
   def removeOrganization(organizationId: Id) = organizations.get(organizationId) match {
     case Some(organization) =>
@@ -67,7 +73,7 @@ case class KanbanSystem(
             )
           )
         }
-        case Failure(ex) => Failure(ex) 
+        case Failure(ex) => Failure(ex)
       }
     }
     case None => Failure(

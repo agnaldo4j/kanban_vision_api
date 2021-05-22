@@ -1,13 +1,14 @@
 package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{KanbanSystemChanged, Board, KanbanSystem}
+import com.kanban.vision.domain.{Board, KanbanSystem, KanbanSystemChanged}
 import com.kanban.vision.domain.commands.OrganizationChangeable.{AddSimpleBoard, OrganizationCommand}
+import com.kanban.vision.usecase.ChangePerformer
 
 import scala.util.{Failure, Try}
 
-trait Changeable {
-  def execute[RETURN](command: OrganizationCommand): Try[KanbanSystemChanged[RETURN]] = {
+trait Changeable extends ChangePerformer[OrganizationCommand]{
+  override def change[RETURN](command: OrganizationCommand): Try[KanbanSystemChanged[RETURN]] = {
     command match {
       case AddSimpleBoard(organizationId, name, kanbanSystem) => {
         val newKanban = Board.simpleOneWithName(name)
