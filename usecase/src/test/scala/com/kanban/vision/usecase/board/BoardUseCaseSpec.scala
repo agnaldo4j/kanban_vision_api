@@ -5,7 +5,6 @@ import com.kanban.vision.domain.{Board, KanbanSystem, Organization}
 import com.kanban.vision.usecase.board.Changeable.BoardCommand
 import com.kanban.vision.usecase.board.Queryable.{BoardQuery, GetFlowFrom}
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
 import scala.util.Success
 
@@ -20,7 +19,7 @@ class BoardUseCaseSpec extends AnyFreeSpec {
 
       "should have default flow structure" in {
         execute(GetFlowFrom(firstOrganizationId, simpleBoardId, system)) match {
-          case Success(Some(flow)) => flow.steps.size shouldBe 9
+          case Success(Some(flow)) => flow.steps.size === 9
           case _ => fail()
         }
       }

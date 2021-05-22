@@ -1,7 +1,7 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
 ThisBuild / organization := "com.thelambdadev"
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "3.0.0"
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / name         := "kanban-vision-api"
 ThisBuild / javacOptions ++= Seq("-source", "1.11", "-target", "1.11")
@@ -44,62 +44,20 @@ lazy val adapters = (project in file("adapters"))
     )
   ).disablePlugins(AssemblyPlugin)
 
-lazy val config = (project in file("config"))
-  .dependsOn(adapters)
-  .settings(
-    name := "Config",
-    libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.4.0",
-    )
-  ).disablePlugins(AssemblyPlugin)
-
 lazy val useCase = (project in file("usecase"))
-  .dependsOn(adapters)
+  .dependsOn(domain, adapters)
   .settings(
     name := "UseCase",
     libraryDependencies ++= Seq(
-      "org.scalactic" %% "scalactic" % "3.2.0",
-      "org.scalatest" %% "scalatest" % "3.2.0" % "test",
-      "org.scalatest" %% "scalatest-freespec" % "3.2.0" % "test"
+      "org.scalactic" %% "scalactic" % "3.2.9",
+      "org.scalatest" %% "scalatest" % "3.2.9" % "test",
+      "org.scalatest" %% "scalatest-freespec" % "3.2.9" % "test"
     )
   ).disablePlugins(AssemblyPlugin)
 
-lazy val eventBus = (project in file("eventbus"))
-  .dependsOn(useCase)
-  .settings(
-    name := "EventBus",
-  ).disablePlugins(AssemblyPlugin)
-
-lazy val quillPersistence = (project in file("quill-persistence"))
-  .dependsOn(config, eventBus)
-  .settings(
-    name := "QuillPersistence",
-    libraryDependencies ++= Seq(
-      "org.postgresql" % "postgresql" % "42.2.17",
-      "io.getquill" %% "quill-jdbc" % "3.5.3"
-    ).map(_.exclude("org.slf4j", "*"))
-  ).disablePlugins(AssemblyPlugin)
-
-lazy val rest = (project in file("rest"))
-  .dependsOn(quillPersistence)
-  .settings(
-    name := "Rest",
-    assemblyMergeStrategy in assembly := defaultMergeStrategy,
-    assemblyJarName in assembly := "kanban-vision-api.jar",
-    test in assembly := {},
-    libraryDependencies ++= Seq(
-      "com.github.finagle" %% "finchx-core" % "0.32.1",
-      "com.github.finagle" %% "finchx-circe" % "0.32.1",
-      "io.circe" %% "circe-generic-extras" % "0.13.0",
-    ),
-    excludeDependencies ++= Seq(
-      // commons-logging is replaced by jcl-over-slf4j
-      ExclusionRule("commons-logging", "commons-logging")
-    )
-  )
 
 lazy val kanbanVisionApi = (project in file("."))
-  .aggregate(config, adapters, domain, quillPersistence, useCase, eventBus, rest)
+  .aggregate(adapters, domain, useCase)
   .settings(
     name := "kanban-vision-api",
   ).disablePlugins(AssemblyPlugin)

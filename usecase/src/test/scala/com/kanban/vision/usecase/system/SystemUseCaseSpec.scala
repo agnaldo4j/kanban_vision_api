@@ -5,7 +5,6 @@ import com.kanban.vision.domain.SystemChangeable.{AddOrganization, DeleteOrganiz
 import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
 import com.kanban.vision.domain.{KanbanSystem, Organization}
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
 import scala.util.{Success, Try}
 
@@ -21,7 +20,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       "should not have any organization" in {
         val result = execute[List[Organization]](GetAllOrganizations(system))
         result match {
-          case Success(organizations: List[Organization]) => organizations shouldBe List.empty
+          case Success(organizations: List[Organization]) => organizations === List.empty
           case _                         => fail()
         }
       }
@@ -29,9 +28,9 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       "should be able to add an organization" in {
         execute[Organization](AddOrganization(organizationName, system)) match {
           case Success((newSystemState, organization)) =>
-            newSystemState.organizations.nonEmpty shouldBe true
-            newSystemState.organizations.values.head.name shouldBe organizationName
-            organization.name shouldBe organizationName
+            newSystemState.organizations.nonEmpty === true
+            newSystemState.organizations.values.head.name === organizationName
+            organization.name === organizationName
           case _ => fail()
         }
       }
@@ -43,8 +42,8 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       "should be able to add an organization" in {
         execute[Organization](AddOrganization("New Organization", system)) match {
           case Success((newSystemState, organization)) =>
-            newSystemState.organizations.values.size shouldBe 2
-            organization.name shouldBe "New Organization"
+            newSystemState.organizations.values.size === 2
+            organization.name === "New Organization"
           case _ => fail()
         }
       }
@@ -54,8 +53,8 @@ class SystemUseCaseSpec extends AnyFreeSpec {
           case Success(result) =>
             result match {
               case Some(organization: Organization) =>
-                organization.name shouldBe organizationName
-                organization.id shouldBe firstOrganizationId
+                organization.name === organizationName
+                organization.id === firstOrganizationId
               case None => fail()
             }
           case _ => fail()
@@ -67,8 +66,8 @@ class SystemUseCaseSpec extends AnyFreeSpec {
           case Success(result) =>
             result match {
               case Some(organization) =>
-                organization.name shouldBe organizationName
-                organization.id shouldBe firstOrganizationId
+                organization.name === organizationName
+                organization.id === firstOrganizationId
               case None => fail()
             }
           case _ => fail()
@@ -78,7 +77,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
       "should be able to delete an organization by id" in {
         execute[Option[Organization]](DeleteOrganization(firstOrganizationId, system)) match {
           case Success((newSystemState, _)) =>
-            newSystemState.organizations shouldBe Map.empty
+            newSystemState.organizations === Map.empty
           case _ => fail()
         }
       }
