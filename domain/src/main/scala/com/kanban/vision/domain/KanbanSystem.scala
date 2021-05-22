@@ -28,7 +28,7 @@ case class KanbanSystem(
     case None => List.empty
   }
 
-  def addOrganization(organization: Organization)= organizationByName(organization.name) match {
+  def addOrganization(organization: Organization) = organizationByName(organization.name) match {
     case Some(existentOrganization) => {
       Failure(IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}"))
     }
@@ -39,8 +39,8 @@ case class KanbanSystem(
     }
   }
 
-  def organizationByName(name: String) = organizations.values.find { organization =>
-    organization.name == name
+  def organizationByName(name: String) = organizations.values.find {
+    _.name == name
   }
 
   def organizationById(organizationId: Id) = organizations.get(organizationId)
@@ -55,11 +55,21 @@ case class KanbanSystem(
   }
 
   def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {
-    case Some(organization) => Success(
-      copy(
-        organizations = organizations.updated(organization.id, organization.addBoard(board))
-      )
-    )
+    case Some(organization) => {
+      organization.addBoard(board) match {
+        case Success(newOrganizationState) => {
+          val newOrganizations = organizations.updated(organization.id, newOrganizationState)
+          val newSystemState = copy(organizations = newOrganizations)
+          Success(
+            KanbanSystemChanged(
+              newSystemState,
+              board
+            )
+          )
+        }
+        case Failure(ex) => Failure(ex) 
+      }
+    }
     case None => Failure(
       new IllegalStateException(s"Not found organization with id: ${organizationId}")
     )

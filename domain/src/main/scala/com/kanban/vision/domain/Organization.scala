@@ -2,6 +2,7 @@ package com.kanban.vision.domain
 
 import com.kanban.vision.domain.Domain.{Domain, Id}
 
+import scala.util.{Failure, Success, Try}
 import java.util.UUID
 
 case class Organization(
@@ -14,10 +15,15 @@ case class Organization(
     case Some(board) => Some(board.flow)
     case None => None
   }
+  
+  def boardByName(boardName: String) = boards.values.find {_.name == boardName}
 
   def allBoards(): List[Board] = boards.values.toList
 
-  def addBoard(board: Board): Organization = {
-    this.copy(boards = boards.updated(board.id, board))
+  def addBoard(board: Board): Try[Organization] = {
+    boardByName(board.name) match {
+      case Some(_) => Failure(IllegalStateException(s"Already exixts a borad with name: ${board.name}"))
+      case None => Success(this.copy(boards = boards.updated(board.id, board)))
+    }
   }
 }

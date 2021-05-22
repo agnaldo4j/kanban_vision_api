@@ -1,11 +1,12 @@
 package com.kanban.vision.usecase.board
 
+import com.kanban.vision.domain.KanbanSystemChanged
 import com.kanban.vision.domain.commands.BoardChangeable.BoardCommand
 
 import scala.util.{Failure, Try}
 
 trait Changeable {
-  def execute[RETURN](command: BoardCommand[RETURN]): Try[RETURN] = {
+  def execute[RETURN](command: BoardCommand): Try[KanbanSystemChanged[RETURN]] = {
     command match {
       case _ => Failure(new IllegalStateException(s"Command not found ${command}"))
     }

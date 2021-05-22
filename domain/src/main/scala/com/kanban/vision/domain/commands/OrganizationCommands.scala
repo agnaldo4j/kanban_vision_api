@@ -5,13 +5,13 @@ import com.kanban.vision.domain.{Board, KanbanSystem}
 
 object OrganizationChangeable {
 
-  trait OrganizationCommand[RETURN]
+  trait OrganizationCommand
 
   case class AddSimpleBoard(
                              organizationId: Id,
                              name: String,
                              kanbanSystem: KanbanSystem
-                           ) extends OrganizationCommand[KanbanSystem]
+                           ) extends OrganizationCommand
 
 }
 

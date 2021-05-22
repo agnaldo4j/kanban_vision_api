@@ -5,7 +5,7 @@ import com.kanban.vision.domain.{Flow, KanbanSystem}
 
 object BoardChangeable {
 
-  trait BoardCommand[RETURN]
+  trait BoardCommand
 
 }
 
