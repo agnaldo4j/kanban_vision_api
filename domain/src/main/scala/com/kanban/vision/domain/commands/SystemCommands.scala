@@ -1,6 +1,7 @@
-package com.kanban.vision.domain
+package com.kanban.vision.domain.commands
 
 import com.kanban.vision.domain.Domain.Id
+import com.kanban.vision.domain.KanbanSystem
 
 object SystemChangeable {
 
@@ -23,4 +24,3 @@ object SystemQueryable {
   case class GetAllOrganizations(kanbanSystem: KanbanSystem) extends SystemQueryable
 
 }
-

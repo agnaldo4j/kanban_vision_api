@@ -2,7 +2,7 @@ package com.kanban.vision.usecase.organization
 
 import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain.{Board, KanbanSystem}
-import com.kanban.vision.usecase.organization.Changeable.{AddSimpleBoard, OrganizationCommand}
+import com.kanban.vision.domain.commands.OrganizationChangeable.{AddSimpleBoard, OrganizationCommand}
 
 import scala.util.{Failure, Try}
 
@@ -18,14 +18,4 @@ trait Changeable {
   }
 }
 
-object Changeable {
 
-  trait OrganizationCommand[RETURN]
-
-  case class AddSimpleBoard(
-                              organizationId: Id,
-                              name: String,
-                              kanbanSystem: KanbanSystem
-                            ) extends OrganizationCommand[KanbanSystem]
-
-}

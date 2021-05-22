@@ -1,9 +1,9 @@
 package com.kanban.vision.usecase.system
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}
-import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
-import com.kanban.vision.domain.{KanbanSystem, Organization}
+import com.kanban.vision.domain.commands.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}
+import com.kanban.vision.domain.commands.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
+import com.kanban.vision.domain.{KanbanSystemChanged, KanbanSystem, Organization}
 import org.scalatest.freespec.AnyFreeSpec
 
 import scala.util.{Success, Try}
@@ -27,7 +27,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
       "should be able to add an organization" in {
         execute[Organization](AddOrganization(organizationName, system)) match {
-          case Success((newSystemState, organization)) =>
+          case Success(KanbanSystemChanged(newSystemState, organization: Organization)) =>
             newSystemState.organizations.nonEmpty === true
             newSystemState.organizations.values.head.name === organizationName
             organization.name === organizationName
@@ -41,7 +41,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
       "should be able to add an organization" in {
         execute[Organization](AddOrganization("New Organization", system)) match {
-          case Success((newSystemState, organization)) =>
+          case Success(KanbanSystemChanged(newSystemState, organization)) =>
             newSystemState.organizations.values.size === 2
             organization.name === "New Organization"
           case _ => fail()
@@ -76,7 +76,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
       "should be able to delete an organization by id" in {
         execute[Option[Organization]](DeleteOrganization(firstOrganizationId, system)) match {
-          case Success((newSystemState, _)) =>
+          case Success(KanbanSystemChanged(newSystemState, _)) =>
             newSystemState.organizations === Map.empty
           case _ => fail()
         }
@@ -86,7 +86,7 @@ class SystemUseCaseSpec extends AnyFreeSpec {
 
   private def execute[RETURN](query: SystemQueryable): Try[RETURN] = SystemUseCase.execute(query)
 
-  private def execute[RETURN](command: SystemCommand): Try[(KanbanSystem, RETURN)] = SystemUseCase.execute(command)
+  private def execute[RETURN](command: SystemCommand): Try[KanbanSystemChanged[RETURN]] = SystemUseCase.execute(command)
 
   private def initialState: Map[Id, Organization] =
     Map(

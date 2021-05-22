@@ -1,6 +1,6 @@
 package com.kanban.vision.usecase.board
 
-import com.kanban.vision.usecase.board.Changeable.BoardCommand
+import com.kanban.vision.domain.commands.BoardChangeable.BoardCommand
 
 import scala.util.{Failure, Try}
 
@@ -10,10 +10,4 @@ trait Changeable {
       case _ => Failure(new IllegalStateException(s"Command not found ${command}"))
     }
   }
-}
-
-object Changeable {
-
-  trait BoardCommand[RETURN]
-
 }

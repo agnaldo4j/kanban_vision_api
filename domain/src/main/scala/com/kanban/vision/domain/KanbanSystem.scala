@@ -3,7 +3,7 @@ package com.kanban.vision.domain
 import com.kanban.vision.domain.Domain.{Domain, Id}
 
 import java.util.UUID
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 
 object KanbanSystem {
   def apply(): KanbanSystem = new KanbanSystem()
@@ -28,10 +28,15 @@ case class KanbanSystem(
     case None => List.empty
   }
 
-  def addOrganization(organization: Organization): (KanbanSystem, Organization) = {
-    val newOrganizations = organizations ++ Map(organization.id -> organization)
-    val newKanbanSystem = copy(organizations = newOrganizations)
-    (newKanbanSystem, organization)
+  def addOrganization(organization: Organization)= organizationByName(organization.name) match {
+    case Some(existentOrganization) => {
+      Failure(IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}"))
+    }
+    case None => {
+      val newOrganizations = organizations ++ Map(organization.id -> organization)
+      val newKanbanSystem = copy(organizations = newOrganizations)
+      Success(KanbanSystemChanged[Organization](newKanbanSystem, organization))
+    }
   }
 
   def organizationByName(name: String) = organizations.values.find { organization =>
@@ -42,13 +47,11 @@ case class KanbanSystem(
 
   def allOrganizations() = organizations.values.toList
 
-  def removeOrganization(organizationId: Id): (KanbanSystem, Option[Organization]) = {
-    organizations.get(organizationId) match {
-      case Some(organization) =>
-        val newKanbanSystem = copy(organizations = organizations - organizationId)
-        (newKanbanSystem, Some(organization))
-      case None => (this, None)
-    }
+  def removeOrganization(organizationId: Id) = organizations.get(organizationId) match {
+    case Some(organization) =>
+      val newKanbanSystem = copy(organizations = organizations - organizationId)
+      Success(KanbanSystemChanged[Option[Organization]](newKanbanSystem, Some(organization)))
+    case None => Failure(IllegalStateException(s"Organization not found with id: $organizationId"))
   }
 
   def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {

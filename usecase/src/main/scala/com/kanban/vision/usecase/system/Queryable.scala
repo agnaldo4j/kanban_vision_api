@@ -1,6 +1,6 @@
 package com.kanban.vision.usecase.system
 
-import com.kanban.vision.domain.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
+import com.kanban.vision.domain.commands.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
 
 import scala.util.{Failure, Success, Try}
 
