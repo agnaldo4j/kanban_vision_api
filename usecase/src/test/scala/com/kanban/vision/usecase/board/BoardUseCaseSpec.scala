@@ -5,15 +5,11 @@ import com.kanban.vision.domain.{KanbanSystemChanged, Flow, Board, KanbanSystem,
 import com.kanban.vision.domain.commands.BoardChangeable.BoardCommand
 import com.kanban.vision.domain.commands.BoardQueryable.{BoardQuery, GetFlowFrom}
 import org.scalatest.freespec.AnyFreeSpec
-import com.kanban.vision.usecase.UseCaseExecutor
-import com.kanban.vision.usecase.board.BoardUseCase
 
 import scala.util.{Try, Success}
 
 class BoardUseCaseSpec 
-  extends AnyFreeSpec 
-    with UseCaseExecutor[BoardQuery, BoardCommand, BoardUseCase.type] {
-  override val usecase = BoardUseCase
+  extends AnyFreeSpec {
   val organizationName = "Company"
   val firstOrganizationId: Id = "organization-1"
   val simpleBoardId: Id = "board-1"
@@ -23,7 +19,7 @@ class BoardUseCaseSpec
       val system = KanbanSystem(initialState)
 
       "should have default flow structure" in {
-        query[Option[Flow]](GetFlowFrom(firstOrganizationId, simpleBoardId, system)) match {
+        BoardUseCase.query(GetFlowFrom(firstOrganizationId, simpleBoardId, system)) match {
           case Success(Some(flow)) => assert(flow.steps.size === 9)
           case _ => fail()
         }

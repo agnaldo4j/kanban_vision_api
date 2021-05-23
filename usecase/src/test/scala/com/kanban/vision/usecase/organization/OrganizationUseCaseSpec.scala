@@ -4,15 +4,12 @@ import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain.{KanbanSystemChanged, Board, KanbanSystem, Organization}
 import com.kanban.vision.domain.commands.OrganizationChangeable.{AddSimpleBoard, OrganizationCommand}
 import com.kanban.vision.domain.commands.OrganizationQueryable.{GetAllBoardsFrom, OrganizationQuery}
-import com.kanban.vision.usecase.UseCaseExecutor
 import org.scalatest.freespec.AnyFreeSpec
 
 import scala.util.{Failure, Success, Try}
 
 class OrganizationUseCaseSpec
-  extends AnyFreeSpec
-    with UseCaseExecutor[OrganizationQuery, OrganizationCommand, OrganizationUseCase.type] {
-  override val usecase = OrganizationUseCase
+  extends AnyFreeSpec {
   val organizationName = "Company"
   val firstOrganizationId: Id = "organization-1"
   val defaultBoardName = "Default"
@@ -23,15 +20,14 @@ class OrganizationUseCaseSpec
       val system = KanbanSystem()
 
       "should not have any organization" in {
-        val result = query[List[Board]](GetAllBoardsFrom(firstOrganizationId, system))
-        result match {
+        OrganizationUseCase.query(GetAllBoardsFrom(firstOrganizationId, system)) match {
           case Success(kanbans: List[Board]) => assert(kanbans === List.empty)
           case _ => fail()
         }
       }
 
       "should not be able to add a Kanban to organization" in {
-        change(AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
+        OrganizationUseCase.change(AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
           case Failure(error) =>
             assert(error.getMessage === s"Not found organization with id: $firstOrganizationId")
           case _ => fail()
@@ -43,7 +39,7 @@ class OrganizationUseCaseSpec
       val system = KanbanSystem(initialState)
 
       "should be able to add an kanban on organization" in {
-        change[Board](AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
+        OrganizationUseCase.change(AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
           case Success(KanbanSystemChanged(system, board)) => {
             val Success(boards) = system.allBoards(firstOrganizationId)
             assert(boards.size === 1)
@@ -61,14 +57,14 @@ class OrganizationUseCaseSpec
         )
 
       "shouldn't be able to add an kanban with default name on organization" in {
-        change[Board](AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
+        OrganizationUseCase.change(AddSimpleBoard(firstOrganizationId, defaultBoardName, system)) match {
           case Success(_) => fail()
           case Failure(ex) => assert(ex.getMessage === "Already exixts a borad with name: Default")
         }
       }
 
       "should be able to add an kanban with new name on organization" in {
-        change[Board](AddSimpleBoard(firstOrganizationId, "New", system)) match {
+        OrganizationUseCase.change(AddSimpleBoard(firstOrganizationId, "New", system)) match {
           case Success(KanbanSystemChanged(system, board)) => {
             val Success(boards) = system.allBoards(firstOrganizationId)
             assert(boards.contains(board) === true)
