@@ -9,7 +9,8 @@ case class Organization(
                          id: Id = UUID.randomUUID().toString,
                          audit: Audit = Audit(),
                          name: String,
-                         boards: Map[Id, Board] = Map.empty
+                         boards: Map[Id, Board] = Map.empty,
+                         projects: Map[Id, Project] = Map.empty
                        ) extends Domain {
   def boardById(boardId: Id) = boards.get(boardId) match {
     case Some(board) => Some(board.flow)
