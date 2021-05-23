@@ -1,12 +1,13 @@
 package com.kanban.vision.usecase.board
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{KanbanSystemChanged, Flow, Board, KanbanSystem, Organization}
+import com.kanban.vision.domain.{Board, Flow, KanbanSystem, KanbanSystemChanged, Organization}
 import com.kanban.vision.domain.commands.BoardChangeable.BoardCommand
 import com.kanban.vision.domain.commands.BoardQueryable.{BoardQuery, GetFlowFrom}
+import com.kanban.vision.usecase.BoardUseCase
 import org.scalatest.freespec.AnyFreeSpec
 
-import scala.util.{Try, Success}
+import scala.util.{Success, Try}
 
 class BoardUseCaseSpec 
   extends AnyFreeSpec {

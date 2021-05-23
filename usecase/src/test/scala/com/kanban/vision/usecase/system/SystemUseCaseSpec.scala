@@ -1,9 +1,10 @@
 package com.kanban.vision.usecase.system
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.commands.SystemChangeable.{AddOrganization, DeleteOrganization, SystemChangeable}
-import com.kanban.vision.domain.commands.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQueryable}
+import com.kanban.vision.domain.commands.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}
+import com.kanban.vision.domain.commands.SystemQueryable.{GetAllOrganizations, GetOrganizationById, GetOrganizationByName, SystemQuery}
 import com.kanban.vision.domain.{KanbanSystem, KanbanSystemChanged, Organization}
+import com.kanban.vision.usecase.SystemUseCase
 import org.scalatest.freespec.AnyFreeSpec
 
 import scala.util.{Success, Try}
