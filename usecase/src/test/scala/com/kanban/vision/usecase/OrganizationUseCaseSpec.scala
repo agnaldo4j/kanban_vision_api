@@ -1,9 +1,9 @@
-package com.kanban.vision.usecase.organization
+package com.kanban.vision.usecase
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Board, KanbanSystem, KanbanSystemChanged, Organization}
 import com.kanban.vision.domain.commands.OrganizationChangeable.{AddSimpleBoard, OrganizationCommand}
 import com.kanban.vision.domain.commands.OrganizationQueryable.{GetAllBoardsFrom, OrganizationQuery}
+import com.kanban.vision.domain.{Board, KanbanSystem, KanbanSystemChanged, Organization}
 import com.kanban.vision.usecase.OrganizationUseCase
 import org.scalatest.freespec.AnyFreeSpec
 

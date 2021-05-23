@@ -1,4 +1,4 @@
-package com.kanban.vision.usecase.system
+package com.kanban.vision.usecase
 
 import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain.commands.SystemChangeable.{AddOrganization, DeleteOrganization, SystemCommand}

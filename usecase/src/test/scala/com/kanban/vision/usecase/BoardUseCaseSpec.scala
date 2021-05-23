@@ -1,9 +1,9 @@
-package com.kanban.vision.usecase.board
+package com.kanban.vision.usecase
 
 import com.kanban.vision.domain.Domain.Id
-import com.kanban.vision.domain.{Board, Flow, KanbanSystem, KanbanSystemChanged, Organization}
 import com.kanban.vision.domain.commands.BoardChangeable.BoardCommand
 import com.kanban.vision.domain.commands.BoardQueryable.{BoardQuery, GetFlowFrom}
+import com.kanban.vision.domain._
 import com.kanban.vision.usecase.BoardUseCase
 import org.scalatest.freespec.AnyFreeSpec
 
