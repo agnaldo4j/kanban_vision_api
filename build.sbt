@@ -1,5 +1,7 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
+val scalatestVersion = "3.2.9"
+
 ThisBuild / organization := "com.thelambdadev"
 ThisBuild / scalaVersion := "3.0.0"
 ThisBuild / version      := "0.1.0-SNAPSHOT"
@@ -30,6 +32,12 @@ val defaultMergeStrategy: String => MergeStrategy = {
   case _ => MergeStrategy.deduplicate
 }
 
+lazy val scalaTestDependency = Seq(
+  "org.scalactic" %% "scalactic" % scalatestVersion,
+  "org.scalatest" %% "scalatest" % scalatestVersion % "test",
+  "org.scalatest" %% "scalatest-freespec" % scalatestVersion % "test"
+)
+
 lazy val domain = (project in file("domain"))
   .settings(
     name := "Domain"
@@ -48,11 +56,7 @@ lazy val useCase = (project in file("usecase"))
   .dependsOn(domain, adapters)
   .settings(
     name := "UseCase",
-    libraryDependencies ++= Seq(
-      "org.scalactic" %% "scalactic" % "3.2.9",
-      "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      "org.scalatest" %% "scalatest-freespec" % "3.2.9" % "test"
-    )
+    libraryDependencies ++= scalaTestDependency
   ).disablePlugins(AssemblyPlugin)
 
 
