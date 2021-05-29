@@ -13,6 +13,7 @@ class BoardUseCaseSpec
   extends AnyFreeSpec {
   val organizationName = "Company"
   val firstOrganizationId: Id = "organization-1"
+  val firstSimulationId: Id = "simulation-1"
   val simpleBoardId: Id = "board-1"
 
   "A System" - {
@@ -20,7 +21,7 @@ class BoardUseCaseSpec
       val system = KanbanSystem(initialState)
 
       "should have default flow structure" in {
-        BoardUseCase.query(GetFlowFrom(firstOrganizationId, simpleBoardId, system)) match {
+        BoardUseCase.query(GetFlowFrom(firstOrganizationId, firstSimulationId, simpleBoardId, system)) match {
           case Success(Some(flow)) => assert(flow.steps.size === 9)
           case _ => fail()
         }
@@ -30,7 +31,8 @@ class BoardUseCaseSpec
 
   private def initialState: Map[Id, Organization] = {
     val boards = Map(simpleBoardId -> Board.simpleOne(id = simpleBoardId, name = "Default"))
-    val organization = Organization(id = firstOrganizationId, name = organizationName, boards = boards)
+    val simulations = Map(firstSimulationId -> Simulation(order = 0, boards = boards))
+    val organization = Organization(id = firstOrganizationId, name = organizationName, simulations = simulations)
     Map(firstOrganizationId -> organization)
   }
 }

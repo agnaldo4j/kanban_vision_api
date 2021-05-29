@@ -9,22 +9,28 @@ case class Organization(
                          id: Id = UUID.randomUUID().toString,
                          audit: Audit = Audit(),
                          name: String,
-                         boards: Map[Id, Board] = Map.empty,
-                         projects: Map[Id, Project] = Map.empty
+                         simulations: Map[Id, Simulation] = Map.empty,
                        ) extends Domain {
-  def boardById(boardId: Id) = boards.get(boardId) match {
-    case Some(board) => Some(board.flow)
-    case None => None
-  }
-  
-  def boardByName(boardName: String) = boards.values.find {_.name == boardName}
 
-  def allBoards(): List[Board] = boards.values.toList
+  def getFlowFrom(simulationId: Id, boardId: Id): Option[Flow] = simulationById(simulationId).flatMap(_.getFlowFrom(boardId))
 
-  def addBoard(board: Board): Try[Organization] = {
-    boardByName(board.name) match {
-      case Some(_) => Failure(IllegalStateException(s"Already exixts a borad with name: ${board.name}"))
-      case None => Success(this.copy(boards = boards.updated(board.id, board)))
+  def simulationById(simulationId: Id): Option[Simulation] = simulations.get(simulationId)
+
+  def boardById(simulationId: Id, boardId: Id) = simulationById(simulationId).map(_.boardById(boardId))
+
+  def boardByName(simulationId: Id,  boardName: String) = simulationById(simulationId).map(_.boardByName(boardName))
+
+  def allBoards(simulationId: Id): Option[List[Board]] = simulationById(simulationId).map(_.allBoards())
+
+  def addBoard(simulationId: Id, board: Board): Try[Organization] = {
+    simulationById(simulationId) match {
+      case Some(simulation) => simulation.addBoard(board) match {
+        case Success(newSimulation) => Success(
+          this.copy(simulations = simulations.updated(simulationId, newSimulation))
+        )
+        case Failure(ex) => Failure(ex)
+      }
+      case None => Failure(IllegalStateException(s"Simulation not found with id: $simulationId"))
     }
   }
 }

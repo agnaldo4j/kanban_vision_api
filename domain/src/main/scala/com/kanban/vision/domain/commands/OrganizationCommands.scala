@@ -12,11 +12,12 @@ object OrganizationChangeable {
 
   case class AddSimpleBoard(
                              organizationId: Id,
+                             simulationId: Id,
                              name: String,
                              kanbanSystem: KanbanSystem
                            ) extends OrganizationCommand[Board] {
     override def execute(): Try[KanbanSystemChanged[Board]] = {
-      kanbanSystem.addBoardOn(organizationId, Board(name = name))
+      kanbanSystem.addBoardOn(organizationId, simulationId, Board(name = name))
     }
   }
 
@@ -30,9 +31,10 @@ object OrganizationQueryable {
 
   case class GetAllBoardsFrom(
                                organizationId: Id,
+                               simulationId: Id,
                                kanbanSystem: KanbanSystem
-                             ) extends OrganizationQuery[List[Board]] {
-    override def execute(): Try[List[Board]] = kanbanSystem.allBoards(organizationId)
+                             ) extends OrganizationQuery[Option[List[Board]]] {
+    override def execute(): Try[Option[List[Board]]] = kanbanSystem.allBoards(organizationId, simulationId)
   }
 
 }

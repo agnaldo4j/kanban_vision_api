@@ -17,17 +17,14 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
-  def getFlowFrom(organizationId: Id, boardId: Id): Try[Option[Flow]] = Success(
+  def getFlowFrom(organizationId: Id, simulationId: Id, boardId: Id): Try[Option[Flow]] = Success(
     organizations
       .get(organizationId)
-      .flatMap(_.boardById(boardId))
+      .flatMap(_.getFlowFrom(simulationId, boardId))
   )
 
-  def allBoards(organizationId: Id): Try[List[Board]] = {
-    val result = organizations.get(organizationId) match {
-      case Some(organization) => organization.allBoards()
-      case None => List.empty
-    }
+  def allBoards(organizationId: Id, simnulationId: Id): Try[Option[List[Board]]] = {
+    val result = organizations.get(organizationId).flatMap(_.allBoards(simnulationId))
     Success(result)
   }
 
@@ -60,9 +57,9 @@ case class KanbanSystem(
     case None => Failure(IllegalStateException(s"Organization not found with id: $organizationId"))
   }
 
-  def addBoardOn(organizationId: Id, board: Board) = organizations.get(organizationId) match {
+  def addBoardOn(organizationId: Id, simulationId: Id, board: Board) = organizations.get(organizationId) match {
     case Some(organization) => {
-      organization.addBoard(board) match {
+      organization.addBoard(simulationId, board) match {
         case Success(newOrganizationState) => {
           val newOrganizations = organizations.updated(organization.id, newOrganizationState)
           val newSystemState = copy(organizations = newOrganizations)

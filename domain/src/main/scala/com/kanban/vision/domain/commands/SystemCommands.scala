@@ -17,6 +17,7 @@ object SystemChangeable {
     override def execute(): Try[KanbanSystemChanged[Organization]] = kanbanSystem.organizationByName(name) match {
       case Success(Some(_)) => Failure(IllegalStateException("Organization already exists with name: $name"))
       case Success(None) => kanbanSystem.addOrganization(Organization(name = name))
+      case Failure(ex) => Failure(ex)
     }
   }
 

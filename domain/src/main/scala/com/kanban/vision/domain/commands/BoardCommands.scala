@@ -19,10 +19,11 @@ object BoardQueryable {
 
   case class GetFlowFrom(
                           organizationId: Id,
+                          simulationId: Id,
                           boardId: Id,
                           kanbanSystem: KanbanSystem
                         ) extends BoardQuery[Option[Flow]] {
-    override def execute(): Try[Option[Flow]] = kanbanSystem.getFlowFrom(organizationId, boardId)
+    override def execute(): Try[Option[Flow]] = kanbanSystem.getFlowFrom(organizationId, simulationId, boardId)
   }
 }
 
