@@ -1,6 +1,8 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
 val scalatestVersion = "3.2.9"
+val zioVersion = "1.0.9"
+val zioHttpVersion = "1.0.0.0-RC16" //TODO not valid to scala3
 
 ThisBuild / organization := "com.thelambdadev"
 ThisBuild / scalaVersion := "3.0.0"
@@ -38,6 +40,17 @@ lazy val scalaTestDependency = Seq(
   "org.scalatest" %% "scalatest-freespec" % scalatestVersion % "test"
 )
 
+lazy val zioDependency = Seq(
+  "dev.zio" %% "zio" % zioVersion,
+  "dev.zio" %% "zio-streams" % zioVersion,
+)
+
+lazy val zioHttpDependency = Seq(
+  "io.d11" %% "zhttp" % zioHttpVersion
+)
+
+lazy val zHttpProject = RootProject(uri("git://github.com/dream11/zio-http.git"))
+
 lazy val domain = (project in file("domain"))
   .settings(
     name := "Domain"
@@ -46,17 +59,15 @@ lazy val domain = (project in file("domain"))
 lazy val adapters = (project in file("adapters"))
   .dependsOn(domain)
   .settings(
-    name := "Adapters",
-    libraryDependencies ++= Seq(
-      "com.typesafe" % "config" % "1.4.0",
-    )
+    name := "Adapters"
   ).disablePlugins(AssemblyPlugin)
 
 lazy val useCase = (project in file("usecase"))
   .dependsOn(domain, adapters)
   .settings(
     name := "UseCase",
-    libraryDependencies ++= scalaTestDependency
+    libraryDependencies ++= scalaTestDependency,
+    libraryDependencies ++= zioDependency
   ).disablePlugins(AssemblyPlugin)
 
 

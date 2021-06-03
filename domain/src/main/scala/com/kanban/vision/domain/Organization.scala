@@ -24,11 +24,8 @@ case class Organization(
 
   def addBoard(simulationId: Id, board: Board): Try[Organization] = {
     simulationById(simulationId) match {
-      case Some(simulation) => simulation.addBoard(board) match {
-        case Success(newSimulation) => Success(
-          this.copy(simulations = simulations.updated(simulationId, newSimulation))
-        )
-        case Failure(ex) => Failure(ex)
+      case Some(simulation) => simulation.addBoard(board).map { newSimulation =>
+        this.copy(simulations = simulations.updated(simulationId, newSimulation))
       }
       case None => Failure(IllegalStateException(s"Simulation not found with id: $simulationId"))
     }
