@@ -29,9 +29,9 @@ case class KanbanSystem(
   }
 
   def addOrganization(organization: Organization) = organizationByName(organization.name) match {
-    case Success(Some(existentOrganization)) => {
-      Failure(IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}"))
-    }
+    case Success(Some(existentOrganization)) => Failure(
+      IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}")
+    )
     case Success(None) => {
       val newOrganizations = organizations ++ Map(organization.id -> organization)
       val newKanbanSystem = copy(organizations = newOrganizations)
@@ -41,9 +41,7 @@ case class KanbanSystem(
   }
 
   def organizationByName(name: String): Try[Option[Organization]] = Success(
-    organizations.values.find {
-      _.name == name
-    }
+    organizations.values.find(_.name == name)
   )
 
   def organizationById(organizationId: Id): Try[Option[Organization]] = Success(organizations.get(organizationId))
@@ -51,15 +49,16 @@ case class KanbanSystem(
   def allOrganizations(): Try[List[Organization]] = Success(organizations.values.toList)
 
   def removeOrganization(organizationId: Id) = organizations.get(organizationId) match {
-    case Some(organization) =>
+    case Some(organization) => {
       val newKanbanSystem = copy(organizations = organizations - organizationId)
       Success(KanbanSystemChanged[Option[Organization]](newKanbanSystem, Some(organization)))
+    }
     case None => Failure(IllegalStateException(s"Organization not found with id: $organizationId"))
   }
 
   def addBoardOn(organizationId: Id, simulationId: Id, board: Board) = organizations.get(organizationId) match {
     case Some(organization) => {
-      organization.addBoard(simulationId, board) match {
+      organization.addBoard(simulationId, board)  match {
         case Success(newOrganizationState) => {
           val newOrganizations = organizations.updated(organization.id, newOrganizationState)
           val newSystemState = copy(organizations = newOrganizations)
