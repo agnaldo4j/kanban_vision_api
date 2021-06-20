@@ -5,9 +5,13 @@ import com.kanban.vision.domain.Domain.{ComparableByInteger, Domain, Id}
 import java.util.UUID
 
 object Project {
-  def zero(): Project = Project(order = 0)
+  def defaultProjectsToSimpleSimulation(): Map[Id, Project] = Map(
+    (zero.id -> zero), (one.id -> one)
+  )
+
+  val zero: Project = Project(order = 0)
   
-  def one(): Project = Project(order = 1, tasks = Task.toProjectOne())
+  val one: Project = Project(order = 1, tasks = Task.toProjectOne())
 }
 
 case class Project(

@@ -28,7 +28,7 @@ class OrganizationUseCaseSpec
         }
       }
 
-      "should not be able to add a Kanban to organization" in {
+      "should not be able to add a simulation to organization" in {
         OrganizationUseCase.change(AddSimpleBoard(firstOrganizationId, firstSimulationId, defaultBoardName, system)) match {
           case Failure(error) =>
             assert(error.getMessage === s"Not found organization with id: $firstOrganizationId")

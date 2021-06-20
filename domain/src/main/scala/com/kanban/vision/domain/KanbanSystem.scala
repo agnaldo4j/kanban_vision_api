@@ -17,6 +17,12 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
+  def getSimulationFrom(organizationId: Id, simulationId: Id): Try[Option[Simulation]] = Success(
+    organizations
+      .get(organizationId)
+      .flatMap(_.simulationById(simulationId))
+  )
+  
   def getFlowFrom(organizationId: Id, simulationId: Id, boardId: Id): Try[Option[Flow]] = Success(
     organizations
       .get(organizationId)

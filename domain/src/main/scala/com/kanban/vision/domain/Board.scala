@@ -19,7 +19,7 @@ object Board {
                  workers: List[Worker] = Worker.baseWorkers(),
                  name: String
                ): Board = {
-    new Board(
+    Board(
       id = id,
       name = name,
       flow = flow,

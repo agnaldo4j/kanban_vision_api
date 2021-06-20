@@ -2,7 +2,7 @@ import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
 val scalatestVersion = "3.2.9"
 val zioVersion = "1.0.9"
-val zioHttpVersion = "1.0.0.0-RC16+31-8467a6aa-SNAPSHOT" //TODO not valid to scala3
+val zioHttpVersion = "1.0.0.0-RC16+31-8467a6aa-SNAPSHOT"
 val catsVersion = "2.6.1"
 val catsEffectsVersion = "3.1.1"
 

@@ -11,6 +11,14 @@ case object SimpleSimulation extends SimulationType
 
 case object ComplexSimulation extends SimulationType
 
+object Simulation {
+  def simple(id: Id = UUID.randomUUID().toString): Simulation = {
+    val board = Board.simpleOneWithName("Default")
+    val defaultProjects = Project.defaultProjectsToSimpleSimulation()
+    Simulation(id = id, order = 0, boards = Map(board.id -> board), projects = defaultProjects)
+  }
+}
+
 case class Simulation(
                  id: Id = UUID.randomUUID().toString,
                  audit: Audit = Audit(),
