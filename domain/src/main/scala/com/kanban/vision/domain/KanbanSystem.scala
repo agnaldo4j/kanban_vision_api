@@ -22,6 +22,12 @@ case class KanbanSystem(
       .get(organizationId)
       .flatMap(_.simulationById(simulationId))
   )
+
+  def getAllSimulationsFrom(organizationId: Id): Try[Option[List[Simulation]]] = Success(
+    organizations
+      .get(organizationId)
+      .flatMap(_.allSimulations())
+  )
   
   def getFlowFrom(organizationId: Id, simulationId: Id, boardId: Id): Try[Option[Flow]] = Success(
     organizations

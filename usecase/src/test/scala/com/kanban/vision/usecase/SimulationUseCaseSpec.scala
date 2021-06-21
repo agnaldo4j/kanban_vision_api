@@ -2,8 +2,9 @@ package com.kanban.vision.usecase
 
 import com.kanban.vision.domain.Domain.Id
 import com.kanban.vision.domain._
-import com.kanban.vision.domain.commands.OrganizationQueryable.GetAllBoardsFrom
-import com.kanban.vision.domain.commands.SimulationQueryable.GetSimulationFrom
+import com.kanban.vision.domain.commands.SimulationQueryable.GetAllBoardsFrom
+import com.kanban.vision.domain.commands.OrganizationQueryable.GetSimulationFrom
+import com.kanban.vision.domain.commands.SimulationChangeable.AddSimpleBoard
 import com.kanban.vision.usecase.SimulationUseCase
 import org.scalatest.freespec.AnyFreeSpec
 
@@ -34,6 +35,24 @@ class SimulationUseCaseSpec
           case Success(Some(listOfBoards)) => assert(listOfBoards.size === 1)
           case Failure(_) => fail()
           case _ => fail()
+        }
+      }
+
+      "shouldn't be able to add an kanban with default name on organization" in {
+        SimulationUseCase.change(AddSimpleBoard(firstOrganizationId, firstSimulationId, defaultBoardName, system)) match {
+          case Success(_) => fail()
+          case Failure(ex) => assert(ex.getMessage === "Already exixts a borad with name: Default")
+        }
+      }
+
+      "should be able to add an kanban with new name on organization" in {
+        SimulationUseCase.change(AddSimpleBoard(firstOrganizationId, firstSimulationId, "New", system)) match {
+          case Success(KanbanSystemChanged(newSystem, board)) => {
+            val Success(Some(boards)) = newSystem.allBoards(firstOrganizationId, firstSimulationId)
+            assert(boards.contains(board) === true)
+            assert(boards.size === 2)
+          }
+          case Failure(_) => fail()
         }
       }
     }

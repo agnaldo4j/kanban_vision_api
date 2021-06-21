@@ -12,6 +12,8 @@ case class Organization(
                          simulations: Map[Id, Simulation] = Map.empty,
                        ) extends Domain {
 
+  def allSimulations(): Option[List[Simulation]] = Some(simulations.values.toList)
+  
   def getFlowFrom(simulationId: Id, boardId: Id): Option[Flow] = simulationById(simulationId).flatMap(_.getFlowFrom(boardId))
 
   def simulationById(simulationId: Id): Option[Simulation] = simulations.get(simulationId)
