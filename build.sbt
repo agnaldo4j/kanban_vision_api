@@ -12,8 +12,6 @@ ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / name         := "kanban-vision-api"
 ThisBuild / javacOptions ++= Seq("-source", "1.11", "-target", "1.11")
 
-
-
 val defaultMergeStrategy: String => MergeStrategy = {
   case x if Assembly.isConfigFile(x) =>
     MergeStrategy.concat
