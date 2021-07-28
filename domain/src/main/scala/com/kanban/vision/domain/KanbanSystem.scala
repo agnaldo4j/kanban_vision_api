@@ -42,7 +42,7 @@ case class KanbanSystem(
 
   def addOrganization(organization: Organization) = organizationByName(organization.name) match {
     case Success(Some(existentOrganization)) => Failure(
-      IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}")
+      new IllegalStateException(s"Organization already exists with name: ${existentOrganization.name}")
     )
     case Success(None) => {
       val newOrganizations = organizations ++ Map(organization.id -> organization)
@@ -65,7 +65,7 @@ case class KanbanSystem(
       val newKanbanSystem = copy(organizations = organizations - organizationId)
       Success(KanbanSystemChanged[Option[Organization]](newKanbanSystem, Some(organization)))
     }
-    case None => Failure(IllegalStateException(s"Organization not found with id: $organizationId"))
+    case None => Failure(new IllegalStateException(s"Organization not found with id: $organizationId"))
   }
 
   def addBoardOn(organizationId: Id, simulationId: Id, board: Board) = organizations.get(organizationId) match {

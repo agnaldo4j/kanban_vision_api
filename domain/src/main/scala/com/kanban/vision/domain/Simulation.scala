@@ -42,7 +42,7 @@ case class Simulation(
 
   def addBoard(board: Board): Try[Simulation] = {
     boardByName(board.name) match {
-      case Some(_) => Failure(IllegalStateException(s"Already exixts a borad with name: ${board.name}"))
+      case Some(_) => Failure(new IllegalStateException(s"Already exixts a borad with name: ${board.name}"))
       case None => Success(this.copy(boards = boards ++ Map(board.id -> board)))
     }
   }

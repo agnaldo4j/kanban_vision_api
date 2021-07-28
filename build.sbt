@@ -1,16 +1,17 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
 val scalatestVersion = "3.2.9"
-val zioVersion = "1.0.9"
-val zioHttpVersion = "1.0.0.0-RC16+31-8467a6aa-SNAPSHOT"
+val zioVersion = "2.0.0-M1"
+val zioIteropCats = "3.1.1.0"
+val http4sVersion = "1.0.0-M23"
 val catsVersion = "2.6.1"
-val catsEffectsVersion = "3.1.1"
+val catsEffectsVersion = "3.2.0"
 
 ThisBuild / organization := "com.thelambdadev"
-ThisBuild / scalaVersion := "3.0.0"
+ThisBuild / scalaVersion := "3.0.1"
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / name         := "kanban-vision-api"
-ThisBuild / javacOptions ++= Seq("-source", "1.11", "-target", "1.11")
+ThisBuild / javacOptions ++= Seq("-source", "1.13", "-target", "1.13")
 
 val defaultMergeStrategy: String => MergeStrategy = {
   case x if Assembly.isConfigFile(x) =>
@@ -42,13 +43,15 @@ lazy val scalaTestDependency = Seq(
   "org.scalatest" %% "scalatest-freespec" % scalatestVersion % "test"
 )
 
+lazy val zioTestDependency = Seq(
+  "dev.zio" %% "zio-test" % zioVersion % "test",
+  "dev.zio" %% "zio-test-sbt" % zioVersion % "test",
+)
+
 lazy val zioDependency = Seq(
   "dev.zio" %% "zio" % zioVersion,
   "dev.zio" %% "zio-streams" % zioVersion,
-)
-
-lazy val zioHttpDependency = Seq(
-  "io.d11" %% "zhttp" % zioHttpVersion
+  "dev.zio" %% "zio-logging" % "0.5.11",
 )
 
 lazy val catsDependency = Seq(
@@ -59,7 +62,13 @@ lazy val catsEffectsDependency = Seq(
   "org.typelevel" %% "cats-effect" % catsEffectsVersion
 )
 
-//lazy val zHttpProject = RootProject(uri("git://github.com/dream11/zio-http.git"))
+lazy val http4sDependency = Seq(
+  "org.http4s" %% "http4s-dsl" % http4sVersion,
+  "org.http4s" %% "http4s-blaze-server" % http4sVersion,
+  "dev.zio"    %% "zio-interop-cats"    % zioIteropCats
+)
+
+//lazy val zioMicroServicesProject = RootProject(uri("git://github.com/zio/zio-microservice.git"))
 
 lazy val domain = (project in file("domain"))
   .settings(
@@ -77,30 +86,38 @@ lazy val useCase = (project in file("usecase"))
   .settings(
     name := "UseCase",
     libraryDependencies ++= scalaTestDependency,
+    libraryDependencies ++= zioTestDependency,
     libraryDependencies ++= zioDependency,
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   ).disablePlugins(AssemblyPlugin)
 
 lazy val catsUseCase = (project in file("cats-usecase"))
   .dependsOn(domain, adapters)
   .settings(
     name := "CatsUseCase",
-    libraryDependencies ++= scalaTestDependency,
+    //libraryDependencies ++= scalaTestDependency,
     libraryDependencies ++= catsDependency,
     libraryDependencies ++= catsEffectsDependency
   ).disablePlugins(AssemblyPlugin)
 
-lazy val zioHttpRest = (project in file("zio-http-rest"))
+//lazy val zioMicroservicesRest = (project in file("zio-microservices-rest"))
+//  .dependsOn(zioMicroServicesProject)
+//  .settings(
+//    name := "ZioMicroservicesRest",
+//    //scalacOptions += "-Ytasty-reader",
+//    //libraryDependencies ++= zioDependency,
+//  ).disablePlugins(AssemblyPlugin)
+
+lazy val http4sRest = (project in file("http4s-rest"))
   .dependsOn()
   .settings(
-    name := "ZioHttpRest",
-    resolvers +=
-      "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
-    libraryDependencies ++= zioHttpDependency
+    name := "http4sRest",
+    libraryDependencies ++= http4sDependency
   ).disablePlugins(AssemblyPlugin)
 
 
 lazy val kanbanVisionApi = (project in file("."))
-  .aggregate(adapters, domain, useCase, catsUseCase, zioHttpRest)
+  .aggregate(adapters, domain, useCase, catsUseCase)
   .settings(
     name := "kanban-vision-api",
   ).disablePlugins(AssemblyPlugin)

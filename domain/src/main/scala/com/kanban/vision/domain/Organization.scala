@@ -29,7 +29,7 @@ case class Organization(
       case Some(simulation) => simulation.addBoard(board).map { newSimulation =>
         this.copy(simulations = simulations.updated(simulationId, newSimulation))
       }
-      case None => Failure(IllegalStateException(s"Simulation not found with id: $simulationId"))
+      case None => Failure(new IllegalStateException(s"Simulation not found with id: $simulationId"))
     }
   }
 }

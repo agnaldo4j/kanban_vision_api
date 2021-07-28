@@ -9,7 +9,7 @@ import scala.util.Try
 
 object SimulationChangeable {
 
-  trait SimulationCommand[RETURN] {
+  trait SimulationCommand[RETURN] { 
     def execute(): Try[KanbanSystemChanged[RETURN]]
   }
 
