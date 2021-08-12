@@ -12,15 +12,19 @@ case class Organization(
                          simulations: Map[Id, Simulation] = Map.empty,
                        ) extends Domain {
 
+  def addSimulation(simulation: Simulation): Try[Organization] = Success(
+    this.copy(simulations = simulations.updated(simulation.id, simulation))
+  )
+
   def allSimulations(): Option[List[Simulation]] = Some(simulations.values.toList)
-  
+
   def getFlowFrom(simulationId: Id, boardId: Id): Option[Flow] = simulationById(simulationId).flatMap(_.getFlowFrom(boardId))
 
   def simulationById(simulationId: Id): Option[Simulation] = simulations.get(simulationId)
 
   def boardById(simulationId: Id, boardId: Id) = simulationById(simulationId).map(_.boardById(boardId))
 
-  def boardByName(simulationId: Id,  boardName: String) = simulationById(simulationId).map(_.boardByName(boardName))
+  def boardByName(simulationId: Id, boardName: String) = simulationById(simulationId).map(_.boardByName(boardName))
 
   def allBoards(simulationId: Id): Option[List[Board]] = simulationById(simulationId).map(_.allBoards())
 

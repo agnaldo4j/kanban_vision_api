@@ -1,9 +1,10 @@
 package com.kanban.vision.domain
 
+import com.kanban.vision.domain
 import com.kanban.vision.domain.Domain.{Domain, Id}
 
 import java.util.UUID
-import scala.util.{Try, Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 object KanbanSystem {
   def apply(): KanbanSystem = new KanbanSystem()
@@ -17,6 +18,21 @@ case class KanbanSystem(
                          audit: Audit = Audit(),
                          organizations: Map[Id, Organization] = Map.empty
                        ) extends Domain {
+
+  def addSimulation(
+                     organizationId: Id,
+                     simulation: Simulation
+                   ): Try[KanbanSystemChanged[Simulation]] = organizations.get(organizationId) match {
+    case Some(organization) => {
+      organization.addSimulation(simulation).map { newOrganization =>
+        this.copy(organizations = organizations.updated(newOrganization.id, newOrganization))
+      }.map(KanbanSystemChanged(_, simulation))
+    }
+    case None => Failure(
+      new IllegalStateException(s"Not found organization with id: ${organizationId}")
+    )
+  }
+
   def getSimulationFrom(organizationId: Id, simulationId: Id): Try[Option[Simulation]] = Success(
     organizations
       .get(organizationId)
@@ -28,7 +44,7 @@ case class KanbanSystem(
       .get(organizationId)
       .flatMap(_.allSimulations())
   )
-  
+
   def getFlowFrom(organizationId: Id, simulationId: Id, boardId: Id): Try[Option[Flow]] = Success(
     organizations
       .get(organizationId)
@@ -70,7 +86,7 @@ case class KanbanSystem(
 
   def addBoardOn(organizationId: Id, simulationId: Id, board: Board) = organizations.get(organizationId) match {
     case Some(organization) => {
-      organization.addBoard(simulationId, board)  match {
+      organization.addBoard(simulationId, board) match {
         case Success(newOrganizationState) => {
           val newOrganizations = organizations.updated(organization.id, newOrganizationState)
           val newSystemState = copy(organizations = newOrganizations)

@@ -14,15 +14,16 @@ object OrganizationChangeable {
 
   case class AddSimpleSimulation(
                                   organizationId: Id,
+                                  name: String,
+                                  description: String,
                                   kanbanSystem: KanbanSystem
                                 ) extends OrganizationCommand[Simulation] {
-    //TODO complete implementation: Add name and description on Simulation, change order by dateTime to order simulations
     def execute(): Try[KanbanSystemChanged[Simulation]] = {
-      val simulation = Simulation.simple()
-      val newState = kanbanSystem//kanbanSystem.addSimulation(organizationId, simulation)
-      Success(
-        KanbanSystemChanged(newState, simulation)
-      )
+      kanbanSystem
+        .addSimulation(
+          organizationId,
+          Simulation.simple(name = name, description = description)
+        )
     }
   }
 }

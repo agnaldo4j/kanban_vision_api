@@ -91,14 +91,14 @@ lazy val useCase = (project in file("usecase"))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   ).disablePlugins(AssemblyPlugin)
 
-lazy val catsUseCase = (project in file("cats-usecase"))
-  .dependsOn(domain, adapters)
-  .settings(
-    name := "CatsUseCase",
-    //libraryDependencies ++= scalaTestDependency,
-    libraryDependencies ++= catsDependency,
-    libraryDependencies ++= catsEffectsDependency
-  ).disablePlugins(AssemblyPlugin)
+//lazy val catsUseCase = (project in file("cats-usecase"))
+//  .dependsOn(domain, adapters)
+//  .settings(
+//    name := "CatsUseCase",
+//    //libraryDependencies ++= scalaTestDependency,
+//    libraryDependencies ++= catsDependency,
+//    libraryDependencies ++= catsEffectsDependency
+//  ).disablePlugins(AssemblyPlugin)
 
 //lazy val zioMicroservicesRest = (project in file("zio-microservices-rest"))
 //  .dependsOn(zioMicroServicesProject)
@@ -117,7 +117,7 @@ lazy val http4sRest = (project in file("http4s-rest"))
 
 
 lazy val kanbanVisionApi = (project in file("."))
-  .aggregate(adapters, domain, useCase, catsUseCase)
+  .aggregate(adapters, domain, useCase)
   .settings(
     name := "kanban-vision-api",
   ).disablePlugins(AssemblyPlugin)
