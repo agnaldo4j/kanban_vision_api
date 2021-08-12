@@ -25,7 +25,7 @@ case class KanbanSystem(
                    ): Try[KanbanSystemChanged[Simulation]] = organizations.get(organizationId) match {
     case Some(organization) => {
       organization.addSimulation(simulation).map { newOrganization =>
-        this.copy(organizations = organizations.updated(newOrganization.id, newOrganization))
+        copy(organizations = organizations.updated(newOrganization.id, newOrganization))
       }.map(KanbanSystemChanged(_, simulation))
     }
     case None => Failure(
@@ -86,19 +86,10 @@ case class KanbanSystem(
 
   def addBoardOn(organizationId: Id, simulationId: Id, board: Board) = organizations.get(organizationId) match {
     case Some(organization) => {
-      organization.addBoard(simulationId, board) match {
-        case Success(newOrganizationState) => {
-          val newOrganizations = organizations.updated(organization.id, newOrganizationState)
-          val newSystemState = copy(organizations = newOrganizations)
-          Success(
-            KanbanSystemChanged(
-              newSystemState,
-              board
-            )
-          )
-        }
-        case Failure(ex) => Failure(ex)
-      }
+      organization.addBoard(simulationId, board).map { newOrganizationState =>
+        val newOrganizations = organizations.updated(newOrganizationState.id, newOrganizationState)
+        copy(organizations = newOrganizations)
+      }.map(KanbanSystemChanged(_, board))
     }
     case None => Failure(
       new IllegalStateException(s"Not found organization with id: ${organizationId}")
