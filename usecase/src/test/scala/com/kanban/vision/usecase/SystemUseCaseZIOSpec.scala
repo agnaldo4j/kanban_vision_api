@@ -5,7 +5,7 @@ import zio.test.environment.Live
 import Assertion.isGreaterThan
 import zio.Clock.nanoTime
 
-val clockSuite = suite("clock") (
+val clockSuite = suite("clock")(
   test("time is non-zero") {
     assertM(Live.live(nanoTime))(isGreaterThan(0L))
   }

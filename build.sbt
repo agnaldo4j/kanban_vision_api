@@ -1,14 +1,14 @@
 import sbtassembly.{Log4j2MergeStrategy, MergeStrategy}
 
 val scalatestVersion = "3.2.9"
-val zioVersion = "2.0.0-M1"
+val zioVersion = "2.0.0-M2"
 val zioIteropCats = "3.1.1.0"
 val http4sVersion = "1.0.0-M23"
 val catsVersion = "2.6.1"
 val catsEffectsVersion = "3.2.0"
 
 ThisBuild / organization := "com.thelambdadev"
-ThisBuild / scalaVersion := "3.0.1"
+ThisBuild / scalaVersion := "3.0.2"
 ThisBuild / version      := "0.1.0-SNAPSHOT"
 ThisBuild / name         := "kanban-vision-api"
 ThisBuild / javacOptions ++= Seq("-source", "1.13", "-target", "1.13")
