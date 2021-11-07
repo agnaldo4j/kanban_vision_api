@@ -91,4 +91,4 @@ lazy val kanbanVisionApi = (project in file("."))
   .aggregate(zioHttpRest, adapters, domain, useCase)
   .settings(
     name := "kanban-vision-api",
-  ).disablePlugins(AssemblyPlugin)
+  )//.disablePlugins(AssemblyPlugin)
